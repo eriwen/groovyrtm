@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="groovyrtm" default="default" basedir=".">
+    <description>Builds, tests, and runs the project groovyrtm.</description>
+    <import file="nbproject/build-impl.xml"/>
+
+    <target name="-pre-init">
+        <property name="ignore.failing.tests" value="true" />
+    </target>
+
+    <target depends="-pre-init,-init-private,-init-user,-init-project,-do-init"
+            name="-init-check">
+        <fail unless="src.dir">Must set src.dir</fail>
+        <fail unless="test.src.dir">Must set test.src.dir</fail>
+        <fail unless="build.dir">Must set build.dir</fail>
+        <fail unless="build.generated.dir">Must set build.generated.dir</fail>
+        <fail unless="build.classes.dir">Must set build.classes.dir</fail>
+        <fail unless="dist.javadoc.dir">Must set dist.javadoc.dir</fail>
+        <fail unless="build.test.classes.dir">Must set build.test.classes.dir</fail>
+        <fail unless="build.test.results.dir">Must set build.test.results.dir</fail>
+        <fail unless="build.classes.excludes">Must set build.classes.excludes</fail>
+    </target>
+
+    <target name="compile-test" depends="init,compile,-pre-pre-compile-test,-do-compile-test">
+        <groovyc srcdir="${test.src.dir}" destdir="${build.test.classes.dir}"
+                classpath="${run.test.classpath}"/>
+    </target>
+
+    <target depends="init,compile-test,-pre-test-run" if="have.tests" name="-do-test-run">
+        <junit showoutput="true" fork="true" dir="${basedir}" forkmode="once"
+                failureproperty="tests.failed" errorproperty="tests.failed">
+            <batchtest todir="${build.test.results.dir}">
+                <fileset dir="${build.test.classes.dir}" includes="**/*Test.class" excludes="**/*IntegrationTest.class" />
+            </batchtest>
+            <classpath>
+                <path path="${build.test.classes.dir}"/>
+                <path path="${run.test.classpath}"/>
+                <path path="${groovy.classpath}"/>
+            </classpath>
+            <syspropertyset>
+                <propertyref prefix="test-sys-prop."/>
+                <mapper from="test-sys-prop.*" to="*" type="glob"/>
+            </syspropertyset>
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+            <jvmarg line="${run.jvmargs}"/>
+        </junit>
+    </target>
+
+    <target depends="init" name="-javadoc-build">
+        <mkdir dir="${dist.javadoc.dir}"/>
+        <taskdef name="groovydoc" classpath="${javac.classpath}"
+                classname="org.codehaus.groovy.ant.Groovydoc">
+        </taskdef>
+        <groovydoc destdir="${dist.javadoc.dir}" sourcepath="${src.dir}"
+                packagenames="**.*" use="${javadoc.use}"
+                windowtitle="${javadoc.windowtitle}"
+                private="${javadoc.private}"/>
+    </target>
+
+    <target name="-post-jar">
+        <zip destfile="${dist.jar.dir}/groovyrtm-all.jar">
+            <zipgroupfileset dir="${dist.jar.dir}" includes="*.jar" excludes=""/>
+            <zipgroupfileset dir="${dist.jar.dir}/lib" includes="*.jar" excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
+        </zip>
+    </target>
+</project>
