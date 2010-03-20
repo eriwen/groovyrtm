@@ -1,12 +1,8 @@
 package org.eriwen.rtm.test
 
 import org.junit.After
-import org.junit.AfterClass
 import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Test
-import static org.junit.Assert.*
 
 import groovy.util.slurpersupport.GPathResult
 import org.eriwen.rtm.RtmCollectionParser
@@ -144,7 +140,7 @@ class RtmCollectionParserTest {
             </rsp>
         ''')
         def lists = instance.parseLists(resp)
-        assert lists instanceof List : 'Expected List returned but got ' + list.class.toString()
+        assert lists instanceof List : 'Expected List returned but got ' + lists.class.toString()
         assert lists.size() == 2 : 'Expected 2 lists but got ' + lists.size()
         assert lists[1].id.equals('124') : 'expected list ID "124"'
         assert lists[1].name.equals('Other List') : 'expected list name "Other List"'

@@ -254,7 +254,7 @@ public class GroovyRtm {
         prefs.get("authToken${user}", "")
     }
 
-    public String setAuthToken(String token) {
+    public void setAuthToken(String token) {
         prefs.put("authToken${this.currentUser}", token)
     }
 
@@ -376,7 +376,7 @@ public class GroovyRtm {
      */
     public Map groupsGetGroupByName(String groupName) throws GroovyRtmException {
         List groups = groupsGetList()
-        return groups.find { it.name.equals(groupName) }
+        return groups.find { it.name.equals groupName }
     }
 
     /**
@@ -539,7 +539,7 @@ public class GroovyRtm {
      */
     public Map locationsGetLocationByName(String locationName) throws GroovyRtmException {
         List locations = locationsGetList()
-        locations.find { it.name.equals(locationName) }
+        locations.find { it.name.equals locationName }
     }
 
     /**
@@ -720,7 +720,8 @@ public class GroovyRtm {
      * @param taskId ID of the task to be modified
      * @param increasePriority will increase priority by 1 if true otherwise decrease
      * @return Map of the modified task's attributes or <code>null</code> if an error occurred
-     * @see tasksMovePriority(String, String, String, String)
+     * @see {@link #tasksMovePriority(String, String, String, String) alternate
+     * method}
      * @throws GroovyRtmException when the HTTP request failed
      */
     public Task tasksMovePriority(String listId, String taskseriesId,
@@ -1129,7 +1130,7 @@ public class GroovyRtm {
      */
     public List<Timezone> timezonesGetList() throws GroovyRtmException {
         def params = ["method=rtm.timezones.getList"]
-        GPathResult resp = null
+        GPathResult resp
         try {
             resp = execMethod(params)
         } catch (SAXParseException saxpe) {

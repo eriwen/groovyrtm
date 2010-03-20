@@ -1,16 +1,11 @@
 package org.eriwen.rtm.test.integration
 
 import org.junit.After
-import org.junit.AfterClass
 import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Test
-import static org.junit.Assert.*
 
 import org.eriwen.rtm.GroovyRtm
 import org.eriwen.rtm.model.*
-import org.eriwen.rtm.GroovyRtmException
 
 /**
  * Integration test class for <code>org.eriwen.rtm.GroovyRtm</code>
@@ -23,6 +18,7 @@ class GroovyRtmIntegrationTest {
 
     @Before void setUp() {
         instance = new GroovyRtm('config/GroovyRtm.properties')
+        //NOTE: put your test user here to run the integration tests
         instance.currentUser = '<your test user here>'
     }
     @After void tearDown() {
@@ -97,37 +93,37 @@ class GroovyRtmIntegrationTest {
         def group = instance.groupsAdd(groupName)
         assert group : 'Expected transactionId returned but got: ' + group
         def groupId = instance.groupsGetGroupByName(groupName)['id']
-        assert instance.groupsDelete(groupId)
+        assert instance.groupsDelete(groupId.toString())
     }
 
     @Test void testGroupsAddContact() {
         println 'testGroupsAddContact()'
         String groupName = 'test group add contact'
-        def group = instance.groupsAdd(groupName)
+        instance.groupsAdd(groupName)
         def groupId = instance.groupsGetGroupByName(groupName)['id']
         //NOTE: Assumes at least 1 existing contact. 
         def contactId = instance.contactsGetList()[0]['id']
-        assert instance.groupsAddContact(contactId, groupId)
-        assert instance.groupsDelete(groupId)
+        assert instance.groupsAddContact(contactId.toString(), groupId.toString())
+        assert instance.groupsDelete(groupId.toString())
     }
 
     @Test void testGroupsDelete() {
         println 'testGroupsDelete()'
         String groupName = 'test group delete'
-        def group = instance.groupsAdd(groupName)
+        instance.groupsAdd(groupName)
         def groupId = instance.groupsGetGroupByName(groupName)['id']
-        assert instance.groupsDelete(groupId)
+        assert instance.groupsDelete(groupId.toString())
     }
 
     @Test void testGroupsGetGroupByName() {
         println 'testGroupsGetGroupByName()'
         String groupName = 'test group name'
-        def group = instance.groupsAdd(groupName)
+        instance.groupsAdd(groupName)
         group = instance.groupsGetGroupByName(groupName)
         assert group instanceof Map : 'wrong return type'
         assert group.get('id')
         assert group.get('name').equals(groupName)
-        assert instance.groupsDelete(group.get('id'))
+        assert instance.groupsDelete(group.get('id').toString())
     }
 
     @Test void testGroupsGetList() {
@@ -139,12 +135,12 @@ class GroovyRtmIntegrationTest {
     @Test void testGroupsRemoveContact() {
         println 'testGroupsRemoveContact()'
         String groupName = 'test group remove contact'
-        def group = instance.groupsAdd(groupName)
+        instance.groupsAdd(groupName)
         def groupId = instance.groupsGetGroupByName(groupName)['id']
         def contact = instance.contactsGetList()[0]
-        assert instance.groupsAddContact(contact['id'], groupId) : 'unable to add contact'
-        assert instance.groupsRemoveContact(contact['id'], groupId) : 'unable to remove contact'
-        assert instance.groupsDelete(groupId) : 'unable to delete group'
+        assert instance.groupsAddContact(contact['id'].toString(), groupId.toString()) : 'unable to add contact'
+        assert instance.groupsRemoveContact(contact['id'].toString(), groupId.toString()) : 'unable to remove contact'
+        assert instance.groupsDelete(groupId.toString()) : 'unable to delete group'
     }
 
     @Test void testListsAdd() {
@@ -288,7 +284,7 @@ class GroovyRtmIntegrationTest {
         def taskRepeat = 'every 1 week'
         def taskTags = 'test'
         //NOTE: Assumes at least 1 location exists
-        def taskLocationId = instance.locationsGetList()[0]['id']
+        def taskLocationId = instance.locationsGetList()[0].id
         def taskUrl = 'http://eriwen.com'
         def taskListId = instance.listsGetList()[0].id
 

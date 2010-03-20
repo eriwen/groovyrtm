@@ -1,19 +1,13 @@
 package org.eriwen.rtm.test
 
 import org.junit.After
-import org.junit.AfterClass
 import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Test
-import static org.junit.Assert.*
 
-import org.gmock.GMock
 import org.gmock.WithGMock
 
 import org.eriwen.rtm.GroovyRtm
 import org.eriwen.rtm.model.*
-import org.eriwen.rtm.GroovyRtmException
 
 /**
  * Unit test class for <code>org.eriwen.rtm.GroovyRtm</code>
@@ -364,18 +358,16 @@ class GroovyRtmTest {
         }
     }
 
-    @Ignore
     @Test void testTasksAddAllParams() {
-        mockGroovyRtm.tasksAdd('Get Bananas', '100').returns(['transactionId': '123', 'name': 'Get Bananas', 'listId': '100', 'taskSeriesId': '101', 'taskId': '102', 'due': '', 'hasDueTime': '0', 'completed': '', 'priority': 'N', 'deleted': '', 'postponed': '0', 'estimate': '', 'repeat': '', 'url': '', 'location': '', 'tags': '', 'notes': '', 'participants': '']).once()
-        mockGroovyRtm.tasksSetPriority('100', '101', '102', '2').returns(['transactionId': '', 'name': 'Get Bananas', 'listId': '100', 'taskSeriesId': '101', 'taskId': '102', 'due': '', 'hasDueTime': '0', 'completed': '', 'priority': '2', 'deleted': '', 'postponed': '0', 'estimate': '', 'repeat': '', 'url': '', 'location': '', 'tags': '', 'notes': '', 'participants': '']).once()
-        mockGroovyRtm.tasksSetDueDate('100', '101', '102', '2009-05-07T10:19:54Z', false, true).returns(['transactionId': '', 'name': 'Get Bananas', 'listId': '100', 'taskSeriesId': '101', 'taskId': '102', 'due': '2009-05-07T10:19:54Z', 'hasDueTime': '1', 'completed': '', 'priority': '2', 'deleted': '', 'postponed': '0', 'estimate': '', 'repeat': '', 'url': '', 'location': '', 'tags': '', 'notes': '', 'participants': '']).once()
-        mockGroovyRtm.tasksSetEstimate('100', '101', '102', '3 hrs').returns(['transactionId': '', 'name': 'Get Bananas', 'listId': '100', 'taskSeriesId': '101', 'taskId': '102', 'due': '2009-05-07T10:19:54Z', 'hasDueTime': '1', 'completed': '', 'priority': '2', 'deleted': '', 'postponed': '0', 'estimate': '3 hrs', 'repeat': '', 'url': '', 'location': '', 'tags': '', 'notes': '', 'participants': '']).once()
-        mockGroovyRtm.tasksSetRecurrence('100', '101', '102', 'every 1 week').returns(['transactionId': '', 'name': 'Get Bananas', 'listId': '100', 'taskSeriesId': '101', 'taskId': '102', 'due': '2009-05-07T10:19:54Z', 'hasDueTime': '1', 'completed': '', 'priority': '2', 'deleted': '', 'postponed': '0', 'estimate': '3 hrs', 'repeat': 'FREQ=WEEKLY;INTERVAL=1', 'url': '', 'location': '', 'tags': '', 'notes': '', 'participants': '']).once()
-        mockGroovyRtm.tasksAddTags('100', '101', '102', 'yay, tag').returns(['transactionId': '', 'name': 'Get Bananas', 'listId': '100', 'taskSeriesId': '101', 'taskId': '102', 'due': '2009-05-07T10:19:54Z', 'hasDueTime': '1', 'completed': '', 'priority': '2', 'deleted': '', 'postponed': '0', 'estimate': '3 hrs', 'repeat': 'FREQ=WEEKLY;INTERVAL=1', 'url': '', 'location': '', 'tags': 'yay, tag', 'notes': '', 'participants': '']).once()
-        mockGroovyRtm.tasksSetLocation('100', '101', '102', '234').returns(['transactionId': '', 'name': 'Get Bananas', 'listId': '100', 'taskSeriesId': '101', 'taskId': '102', 'due': '2009-05-07T10:19:54Z', 'hasDueTime': '1', 'completed': '', 'priority': '2', 'deleted': '', 'postponed': '0', 'estimate': '3 hrs', 'repeat': 'FREQ=WEEKLY;INTERVAL=1', 'url': '', 'location': '234', 'tags': 'yay, tag', 'notes': '', 'participants': '']).once()
-        mockGroovyRtm.tasksSetUrl('100', '101', '102', 'http://eriwen.com').returns(['transactionId': '', 'name': 'Get Bananas', 'listId': '100', 'taskSeriesId': '101', 'taskId': '102', 'due': '2009-05-07T10:19:54Z', 'hasDueTime': '1', 'completed': '', 'priority': '2', 'deleted': '', 'postponed': '0', 'estimate': '3 hrs', 'repeat': 'FREQ=WEEKLY;INTERVAL=1', 'url': 'http://eriwen.com', 'location': '234', 'tags': 'yay, tag', 'notes': '', 'participants': '']).once()
+        def newTask = new Task(transactionId: '123', name: 'Get Bananas', listId: '100', taskSeriesId: '101',
+                taskId: '102', due: '2009-05-07T10:19:54Z', priority: '2', hasDueTime: true, completed: false,
+                deleted: false, estimate: '3 hrs', repeat: 'FREQ=WEEKLY;INTERVAL=1', url: 'http://eriwen.com',
+                locationId: '234', tags: ['yay', 'tag'], participants: [], notes: [])
+        mockGroovyRtm.tasksAdd('Get Bananas', '2', '2009-05-07T10:19:54Z', '3 hrs', 'every 1 week', 'yay, tag', '234',
+                'http://eriwen.com', '100').returns(newTask).once()
         play {
-            def task = instance.tasksAdd('Get Bananas', '2', '2009-05-07T10:19:54Z', '3 hrs', 'every 1 week', 'yay, tag', '234', 'http://eriwen.com', '100')
+            def task = instance.tasksAdd('Get Bananas', '2', '2009-05-07T10:19:54Z', '3 hrs', 'every 1 week',
+                    'yay, tag', '234', 'http://eriwen.com', '100')
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.transactionId.equals('123'): 'Expected transaction ID of "123"'
             assert task.name.equals('Get Bananas'): 'Expected name "Get Bananas"'
@@ -389,7 +381,7 @@ class GroovyRtmTest {
             assert task.estimate.equals('3 hrs'): 'Expected estimate of "3 hrs"'
             assert task.repeat.equals('FREQ=WEEKLY;INTERVAL=1'): 'Expected repeat "FREQ=WEEKLY;INTERVAL=1"'
             assert task.url.equals('http://eriwen.com'): 'Expected URL "http://eriwen.com"'
-            assert task.location.equals('234'): 'Expected location ID "234"'
+            assert task.locationId.equals('234'): 'Expected location ID "234"'
             assert task.priority.equals('2'): 'Expected priority of "2"'
             assert task.tags.join(', ').equals('yay, tag'): 'Expected tags of "yay, tag"'
         }

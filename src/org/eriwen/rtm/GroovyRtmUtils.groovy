@@ -21,7 +21,6 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import org.apache.commons.codec.binary.Hex
 import groovy.util.slurpersupport.GPathResult
-import org.eriwen.rtm.GroovyRtmException
 import org.eriwen.rtm.model.Task
 
 /**
@@ -118,6 +117,7 @@ public class GroovyRtmUtils {
         def connection = urlstr.toURL().openConnection()
         if (connection.responseCode == 200) {
             def responseText = connection.content.text
+          println responseText
             return responseText
         } else if (connection.responseCode == -1) {
             throw new GroovyRtmException("Invalid URL: '${urlstr}' -- Ususally caused by not setting an API Key")
