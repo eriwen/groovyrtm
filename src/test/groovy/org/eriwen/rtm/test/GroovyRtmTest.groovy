@@ -21,7 +21,7 @@ class GroovyRtmTest {
     private static GroovyRtm instance = null
 
     @Before void setUp() {
-        instance = new GroovyRtm('config/RtmService.properties')
+        instance = new GroovyRtm('config/GroovyRtm.properties')
         instance.currentUser = 'bogus'
         mockGroovyRtm = mock(instance)
         mockGroovyRtm.addCommonParams(match{it}).returns([:]).stub()

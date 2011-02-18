@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Eric Wendelin
+ *  Copyright 2010-2011 Eric Wendelin
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ public class GroovyRtm {
     synchronized lastCallTimeMillis
     
     public String currentUser = ''
-    private final String apiKey
-    private final String secret
-    private final String perms
+    private String apiKey
+    private String secret
+    private String perms
     private String frob
     private def curTimeline
     private def config
@@ -133,7 +133,7 @@ public class GroovyRtm {
     public void enforceMinDelay() {
         synchronized (lastCallTimeMillis) {
             def now = new Date().time
-            def delay = (lastCallTimeMillis - now) + Long.parseLong('1050')
+            def delay = (lastCallTimeMillis - now) + 1050L 
             if (delay > 0) {
                 Thread.sleep(delay)
             }
