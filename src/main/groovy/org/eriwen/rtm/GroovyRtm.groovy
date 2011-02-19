@@ -198,8 +198,8 @@ public class GroovyRtm {
      */
     public boolean authCheckToken(String token) {
         def params = ['method=rtm.auth.checkToken']
-        GPathResult rsp = execMethod(params)
-        if (rsp.@stat.equals('ok')) {
+        GPathResult resp = execMethod(params)
+        if (resp && resp.@stat.equals('ok')) {
             return true
         }
         return false
@@ -238,35 +238,19 @@ public class GroovyRtm {
         return authGetToken()
     }
 
-    public void removeAuthToken() {
-        prefs.put("authToken${this.currentUser}", "")
+    public void removeAuthToken(String user = null) {
+        prefs.put("authToken${user ?: currentUser}", "")
     }
 
-    public void removeAuthToken(String user) {
-        prefs.put("authToken${user}", "")
+    public String getAuthToken(String user = null) {
+        prefs.get("authToken${user ?: currentUser}", "")
     }
 
-    public String getAuthToken() {
-        prefs.get("authToken${this.currentUser}", "")
+    public void setAuthToken(String token, String user = null) {
+        prefs.put("authToken${user ?: currentUser}", token)
     }
 
-    public String getAuthToken(String user) {
-        prefs.get("authToken${user}", "")
-    }
-
-    public void setAuthToken(String token) {
-        prefs.put("authToken${this.currentUser}", token)
-    }
-
-    public void setAuthToken(String user, String token) {
-        prefs.put("authToken${user}", token)
-    }
-
-    public boolean isAuthenticated() {
-        return !!getAuthToken()
-    }
-
-    public boolean isAuthenticated(String user) {
+    public boolean isAuthenticated(String user = null) {
         return !!getAuthToken(user)
     }
 
@@ -390,10 +374,10 @@ public class GroovyRtm {
         def params = ["method=rtm.groups.getList"]
         GPathResult resp = execMethod(params)
         def groups = []
-        resp.groups.group.each {
+        resp?.groups?.group?.each {
             groups.push([id:it.@id.toString(),name:it.@name.toString()])
         }
-        groups
+        return groups
     }
 
     /**

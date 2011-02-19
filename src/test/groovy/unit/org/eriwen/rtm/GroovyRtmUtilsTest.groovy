@@ -33,6 +33,11 @@ class GroovyRtmUtilsTest {
         assert apiSig.equals('334cb5cd554cf5d1ffc593d3fa9252fe') : 'Wrong api signature'
     }
 
+    @Test(expected=GroovyRtmException.class) void testGetResponseTextInvalidSite() {
+        instance.getResponseText('http://eriwen.com/404')
+        fail 'Should have gotten GroovyRtmException'
+    }
+
     @Test void testGetResponseText() {
         def response = instance.getResponseText('http://eriwen.com')
         assert response instanceof String : 'Expected String response but got ' + response.class.toString()
@@ -102,6 +107,8 @@ class GroovyRtmUtilsTest {
 
     @Test void testIsOverdue() {
         assert !(instance.isOverdue(null, 0))
+        assert !(instance.isOverdue("BOGUS-DATE-STRING", 0))
+        assert !(instance.isOverdue("1234567890123456789", 0))
 
         Date now = new Date()
         assert !(instance.isOverdue("${now.format(RAW_DATE_FORMAT)}T${now.format(RAW_TIME_FORMAT)}Z", 0))

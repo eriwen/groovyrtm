@@ -83,6 +83,14 @@ class GroovyRtmTest {
         play {
             assert instance.testEcho() : 'echo unsuccessful'
         }
+        mockGroovyRtm.execUnauthenticatedMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="fail"><method>rtm.test.echo</method></rsp>')).once()
+        play {
+            assert !instance.testEcho() : 'echo should be unsuccessful'
+        }
+        mockGroovyRtm.execUnauthenticatedMethod(match{it}).returns(null).once()
+        play {
+            assert !instance.testEcho() : 'echo should be unsuccessful'
+        }
     }
 
     @Test void testEnforceMinDelay() {
@@ -99,8 +107,15 @@ class GroovyRtmTest {
     @Test void testTestLogin() {
         mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><user id="987654321"><username>bob</username></user></rsp>')).once()
         play {
-            boolean success = instance.testLogin()
-            assert success : 'login unsuccessful'
+            assert instance.testLogin() : 'login unsuccessful'
+        }
+        mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="fail">boguserror</rsp>')).once()
+        play {
+            assert !instance.testLogin() : 'login should be unsuccessful'
+        }
+        mockGroovyRtm.execMethod(match{it}).returns(null).once()
+        play {
+            assert !instance.testLogin() : 'login should be unsuccessful'
         }
     }
 
@@ -116,8 +131,15 @@ class GroovyRtmTest {
     @Test void testAuthCheckToken() {
         mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><auth><token>6410bde19b6dfb474fec71f186bc715831ea6842</token><perms>delete</perms><user id="123" username="bob" fullname="Eric Wendelin"/></auth></rsp>')).once()
         play {
-            def isTokenValid = instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842')
-            assert isTokenValid : 'Expected token to be valid'
+            assert instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842') : 'Expected token to be valid'
+        }
+        mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="fail">error</rsp>')).once()
+        play {
+            assert !instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842') : 'Expected token to be invalid'
+        }
+        mockGroovyRtm.execMethod(match{it}).returns(null).once()
+        play {
+            assert !instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842') : 'Expected token to be invalid'
         }
     }
 
@@ -139,6 +161,28 @@ class GroovyRtmTest {
         }
     }
 
+    @Test void testGetNewAuthToken() {
+        mockGroovyRtm.execUnauthenticatedMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><auth><token>4286cc6f8c3dcbf09001ecc83f95000efa45c9f5</token><perms>delete</perms><user id="123" username="bob" fullname="Eric Wendelin"/></auth></rsp>')).once()
+        play {
+            def authToken = instance.getNewAuthToken()
+            assert authToken && authToken instanceof String : 'Expected String auth token'
+            assert authToken.equals('4286cc6f8c3dcbf09001ecc83f95000efa45c9f5') : 'expected auth token "4286cc6f8c3dcbf09001ecc83f95000efa45c9f5" but got ' + authToken
+        }
+    }
+
+    @Test void testAuthTokenCrud() {
+        def testToken = 'BOGUS'
+        instance.setAuthToken(testToken)
+        assertEquals testToken, instance.getAuthToken()
+        instance.removeAuthToken()
+        assertEquals '', instance.getAuthToken()
+
+        instance.setAuthToken(testToken, testUser)
+        assertEquals testToken, instance.getAuthToken(testUser)
+        instance.removeAuthToken(testUser)
+        assertEquals '', instance.getAuthToken(testUser)
+    }
+
     @Test void testContactsGetList() {
         mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><contacts><contact id="1" fullname="Omar Kilani" username="omar"/></contacts></rsp>')).once()
         play {
@@ -146,6 +190,11 @@ class GroovyRtmTest {
             assert contacts instanceof List : "Expected List return type"
             assert contacts.size() == 1 : "Contacts should have 1 contact but got " + contacts.size()
             assert contacts[0].username == "omar" : "Expected user omar but got " + contacts[0].username
+        }
+
+        mockGroovyRtm.execMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.contactsGetList()
         }
     }
 
@@ -240,6 +289,11 @@ class GroovyRtmTest {
             assert groupList.size() == 1 : 'Expected list length of 1 but got ' + groupList.size()
             assert groupList[0].get('name') == 'Friends' : 'Expected group name of "Friends" but got ' + groupList[0].get('name')
         }
+
+        mockGroovyRtm.execMethod(match{it}).returns(null).once()
+        play {
+            assert instance.groupsGetList() == []
+        }
     }
 
     @Test void testGroupsRemoveContact() {
@@ -319,6 +373,11 @@ class GroovyRtmTest {
             def lists = instance.listsGetList()
             assert lists instanceof List : 'Expected List return type, but got ' + lists.class.toString()
             assert lists.size() == 3 : 'Expected 3 lists returned but got ' + lists.size()
+        }
+
+        mockGroovyRtm.execMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.listsGetList()
         }
     }
 
@@ -409,6 +468,11 @@ class GroovyRtmTest {
             def locations = instance.locationsGetList()
             assert locations instanceof List : 'Expected List return type, but got ' + locations.class.toString()
             assert locations.size() == 3 : 'Expected 3 locations returned but got ' + locations.size()
+        }
+
+        mockGroovyRtm.execMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.locationsGetList()
         }
     }
 
@@ -1086,6 +1150,11 @@ class GroovyRtmTest {
             def success = instance.tasksNotesDelete('123')
             assert success : 'Expected true for successful notes delete'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertFalse instance.tasksNotesDelete('123')
+        }
     }
 
     @Test void testTasksNotesEdit() {
@@ -1168,16 +1237,19 @@ class GroovyRtmTest {
             assert timezone.id.equals('217') : 'Expected timezone ID 217'
             assert timezone.name.equals('Asia/Hovd'): 'Expected timezone name "Asia/Hovd"'
 
-            timezone = instance.timezonesGetTimezoneByName('idontexist')
-            assert timezone == null : 'timezone should be null'
+            assert (instance.timezonesGetTimezoneByName('idontexist') == null) : 'timezone should be null'
         }
     }
 
     @Test void testTransactionsUndo() {
         mockGroovyRtm.execTimelineMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"/>')).once()
         play {
-            def success = instance.transactionsUndo('123')
-            assert success : 'Expected true for successful Undo'
+            assert instance.transactionsUndo('123') : 'Expected true for successful Undo'
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertFalse instance.transactionsUndo('123')
         }
     }
 }

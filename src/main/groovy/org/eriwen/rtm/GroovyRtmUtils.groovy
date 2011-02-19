@@ -270,7 +270,7 @@ public class GroovyRtmUtils {
      */
     public boolean isOverdue(String dateStr, int timezoneOffset) {
         //Check for null date
-        if (!dateStr) {
+        if (!dateStr || dateStr.length() < 19) {
             return false;
         }
         Date taskDate;
