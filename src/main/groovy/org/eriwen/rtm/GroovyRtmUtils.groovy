@@ -40,6 +40,7 @@ public class GroovyRtmUtils {
     int dayInMillis = 3600000 * 24
     int weekInMillis = dayInMillis * 7
 
+    /*
     public def smartComparator = [
         compare: { Task o1, Task o2 ->
             if (o1.due == null || o1.due == "") return 1;
@@ -74,7 +75,7 @@ public class GroovyRtmUtils {
         compare: { Task o1, Task o2 ->
             return o1.name.compareTo(o2.name)
         }
-    ] as Comparator
+    ] as Comparator*/
 
     GroovyRtmUtils() {
         setMD5Digest()

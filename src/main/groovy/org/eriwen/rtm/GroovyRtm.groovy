@@ -42,7 +42,7 @@ public class GroovyRtm {
     private def config
     private final Preferences prefs
     private final GroovyRtmUtils utils
-    private final RtmCollectionParser parser
+    private RtmCollectionParser parser
 
     GroovyRtm(String configFilePath) {
         lastCallTimeMillis = new Date().time

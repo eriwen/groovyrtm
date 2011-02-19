@@ -156,6 +156,11 @@ class GroovyRtmTest {
             assert transactionId : 'add contact returned null, expected transactionId'
             assert transactionId == '123' : 'Expected transaction ID "123" but got ' + transactionId
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.contactsAdd('omar')
+        }
     }
 
     @Test void testContactsDelete() {
@@ -164,6 +169,11 @@ class GroovyRtmTest {
             def transactionId = instance.contactsDelete('omar')
             assert transactionId : 'add contact returned null, expected transactionId'
             assert transactionId == '234' : 'Expected transaction ID "234" but got ' + transactionId
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.contactsDelete('omar')
         }
     }
 
@@ -174,6 +184,11 @@ class GroovyRtmTest {
             assert transactionId : 'Expected transactionId returned but got: ' + transactionId
             assert transactionId == '234' : 'Expected transaction ID "234" but got ' + transactionId
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.groupsAdd('Friends')
+        }
     }
 
     @Test void testGroupsAddContact() {
@@ -183,6 +198,11 @@ class GroovyRtmTest {
             assert transactionId : 'Expected transactionId returned but got: ' + transactionId
             assert transactionId == '234' : 'Expected transaction ID "234" but got ' + transactionId
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.groupsAddContact('123','456')
+        }
     }
 
     @Test void testGroupsDelete() {
@@ -191,6 +211,11 @@ class GroovyRtmTest {
             def transactionId = instance.groupsDelete('123')
             assert transactionId : 'Expected transactionId returned but got: ' + transactionId
             assert transactionId == '234' : 'Expected transaction ID "234" but got ' + transactionId
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.groupsDelete('123')
         }
     }
 
@@ -224,6 +249,11 @@ class GroovyRtmTest {
             assert transactionId : 'Expected transactionId returned but got: ' + transactionId
             assert transactionId == '234' : 'Expected transaction ID "234" but got ' + transactionId
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.groupsRemoveContact('123','456')
+        }
     }
 
     @Test void testListsAdd() {
@@ -235,6 +265,11 @@ class GroovyRtmTest {
             assert list['id'] && list['id'].equals('123') : 'expected list ID "123"'
             assert list['name'] && list['name'].equals('New List') : 'expected list name "New List"'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.listsAdd('New List', null)
+        }
     }
 
     @Test void testListsArchive() {
@@ -244,6 +279,11 @@ class GroovyRtmTest {
             assert list : 'expected list to be returned'
             assert list['archived'] : 'expected list archived == 1 but got ' + list['archived']
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.listsArchive('New List')
+        }
     }
 
     @Test void testListsDelete() {
@@ -252,6 +292,11 @@ class GroovyRtmTest {
             def list = instance.listsDelete('123')
             assert list : 'expected list to be returned'
             assert list['deleted'] : 'expected list deleted == 1 but got ' + list['deleted']
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.listsDelete('123')
         }
     }
 
@@ -297,6 +342,11 @@ class GroovyRtmTest {
             def success = instance.listsSetDefaultList('123')
             assert success : 'expected success == true but got ' + success.toString()
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertFalse instance.listsSetDefaultList('123')
+        }
     }
 
     @Test void testListsSetName() {
@@ -306,6 +356,11 @@ class GroovyRtmTest {
             assert list : 'expected list to be returned'
             assert list['name'] && list['name'].equals('High Priority') : 'expected list name "High Priority" but got ' + list['name']
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.listsSetName('100654', 'High Priority')
+        }
     }
 
     @Test void testListsUnarchive() {
@@ -314,6 +369,11 @@ class GroovyRtmTest {
             def list = instance.listsUnarchive('New List')
             assert list : 'expected list to be returned'
             assert !list['archived'] : 'expected list not archived but got ' + list['archived']
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.listsUnarchive('New List')
         }
     }
 
@@ -403,15 +463,42 @@ class GroovyRtmTest {
             assert task.locationId.equals(''): 'Expected blank task location'
             assert task.priority.equals('N'): 'Expected priority of "N"'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksAdd('Get Bananas', null, false)
+        }
     }
 
     @Test void testTasksAddAllParams() {
-        def newTask = new Task(transactionId: '123', name: 'Get Bananas', listId: '100', taskSeriesId: '101',
+        Task newTask = new Task(transactionId: '123', name: 'Get Bananas', listId: '100', taskSeriesId: '101',
                 taskId: '102', due: '2009-05-07T10:19:54Z', priority: '2', hasDueTime: true, completed: false,
                 deleted: false, estimate: '3 hrs', repeat: 'FREQ=WEEKLY;INTERVAL=1', url: 'http://eriwen.com',
                 locationId: '234', tags: ['yay', 'tag'], participants: [], notes: [])
-        mockGroovyRtm.tasksAdd('Get Bananas', '2', '2009-05-07T10:19:54Z', '3 hrs', 'every 1 week', 'yay, tag', '234',
-                'http://eriwen.com', '100').returns(newTask).once()
+        instance.parser = [parseTask: { return newTask }] as RtmCollectionParser
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(new XmlSlurper().parseText('''
+            <rsp stat="ok">
+                <transaction id="123"/>
+                <list id="100">
+                  <taskseries id="101" created="2009-05-07T10:19:54Z" modified="2009-05-07T10:19:54Z"
+                             name="Get Bananas" source="api">
+                    <tags/>
+                    <participants/>
+                    <notes/>
+                    <task id="102" due="" has_due_time="0" added="2009-05-07T10:19:54Z"
+                         completed="" deleted="" priority="N" postponed="0" estimate=""/>
+                  </taskseries>
+                </list>
+            </rsp>
+        ''')).once()
+        mockGroovyRtm.tasksSetPriority('100', '101', '102', '2').returns(newTask).once()
+        mockGroovyRtm.tasksSetDueDate('100', '101', '102', '2009-05-07T10:19:54Z', false, true).returns(newTask).once()
+        mockGroovyRtm.tasksSetEstimate('100', '101', '102', '3 hrs').returns(newTask).once()
+        mockGroovyRtm.tasksSetLocation('100', '101', '102', '234').returns(newTask).once()
+        mockGroovyRtm.tasksSetRecurrence('100', '101', '102', 'every 1 week').returns(newTask).once()
+        mockGroovyRtm.tasksAddTags('100', '101', '102', 'yay, tag').returns(newTask).once()
+        mockGroovyRtm.tasksSetUrl('100', '101', '102', 'http://eriwen.com').returns(newTask).once()
+
         play {
             def task = instance.tasksAdd('Get Bananas', '2', '2009-05-07T10:19:54Z', '3 hrs', 'every 1 week',
                     'yay, tag', '234', 'http://eriwen.com', '100')
@@ -459,6 +546,11 @@ class GroovyRtmTest {
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.tags.join(', ').equals('coffee, good, mmm'): 'Expected tags of "coffee, good, mmm"'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksAddTags('987654321', '987654321', '123456789', 'coffee, good, mmm')
+        }
     }
 
     @Test void testTasksComplete() {
@@ -482,6 +574,11 @@ class GroovyRtmTest {
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.completed: 'Expected task completed'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksComplete('987654321', '987654321', '123456789')
+        }
     }
 
     @Test void testTasksDelete() {
@@ -504,6 +601,11 @@ class GroovyRtmTest {
             def task = instance.tasksDelete('987654321', '987654321', '123456789')
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.deleted: 'Expected task deleted'
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksDelete('987654321', '987654321', '123456789')
         }
     }
 
@@ -578,6 +680,50 @@ class GroovyRtmTest {
         }
     }
 
+    @Test void testTasksMovePriorityBoolean() {
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(new XmlSlurper().parseText('''
+            <rsp stat="ok">
+                <transaction id="123"/>
+                <list id="987654321">
+                  <taskseries id="987654321" created="2009-05-07T10:19:54Z" modified="2009-05-07T10:19:54Z"
+                             name="Get Bananas" source="api">
+                    <tags/>
+                    <participants/>
+                    <notes/>
+                    <task id="123456789" due="" has_due_time="0" added="2009-05-07T10:19:54Z"
+                         completed="" deleted="2009-05-07T10:26:21Z" priority="2" postponed="0" estimate=""/>
+                  </taskseries>
+                </list>
+            </rsp>
+        ''')).once()
+        play {
+            def task = instance.tasksMovePriority('987654321', '987654321', '123456789', true)
+            assert task instanceof Task : 'Expected Task return type, but got ' + task.class.toString()
+            assert task.priority.equals('2'): 'Expected task priority moved to "2"'
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(new XmlSlurper().parseText('''
+            <rsp stat="ok">
+                <transaction id="123"/>
+                <list id="987654321">
+                  <taskseries id="987654321" created="2009-05-07T10:19:54Z" modified="2009-05-07T10:19:54Z"
+                             name="Get Bananas" source="api">
+                    <tags/>
+                    <participants/>
+                    <notes/>
+                    <task id="123456789" due="" has_due_time="0" added="2009-05-07T10:19:54Z"
+                         completed="" deleted="2009-05-07T10:26:21Z" priority="N" postponed="0" estimate=""/>
+                  </taskseries>
+                </list>
+            </rsp>
+        ''')).once()
+        play {
+            def task = instance.tasksMovePriority('987654321', '987654321', '123456789', false)
+            assert task instanceof Task : 'Expected Task return type, but got ' + task.class.toString()
+            assert task.priority.equals('N'): 'Expected task priority moved to "N"'
+        }
+    }
+
     @Test void testTasksMoveTo() {
         mockGroovyRtm.execTimelineMethod(match{it}).returns(new XmlSlurper().parseText('''
             <rsp stat="ok">
@@ -598,6 +744,11 @@ class GroovyRtmTest {
             def task = instance.tasksMoveTo('987654321', '987654321', '123456789', '349523984')
             assert task instanceof Task : 'Expected Task return type, but got ' + task.class.toString()
             assert task.listId.equals('349523984'): 'Expected task list ID to be "349523984"'
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksMoveTo('987654321', '987654321', '123456789', '349523984')
         }
     }
 
@@ -621,6 +772,11 @@ class GroovyRtmTest {
             def task = instance.tasksPostpone('987654321', '987654321', '123456789')
             assert task instanceof Task : 'Expected Task return type, but got ' + task.class.toString()
             assert task.postponed: 'Expected task postponed'
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksPostpone('987654321', '987654321', '123456789')
         }
     }
 
@@ -647,6 +803,11 @@ class GroovyRtmTest {
             assert task instanceof Task : 'Expected Task return type, but got ' + task.class.toString()
             assert task.tags.join(', ').equals('mmm'): 'Expected task tags of "mmm"'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksRemoveTags('987654321', '987654321', '123456789', 'coffee')
+        }
     }
 
     @Test void testTasksSetDueDate() {
@@ -671,6 +832,11 @@ class GroovyRtmTest {
             assert task.due.equals('2009-05-08T10:19:54Z'): 'Expected task tags of "2009-05-07T10:19:54Z"'
             assert task.hasDueTime : 'Expected task has due time but got ' + task.hasDueTime
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksSetDueDate('987654321', '987654321', '123456789', '2009-05-08T10:19:54Z', true, false)
+        }
     }
 
     @Test void testTasksSetEstimate() {
@@ -693,6 +859,11 @@ class GroovyRtmTest {
             def task = instance.tasksSetEstimate('987654321', '987654321', '123456789', '2 hours')
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.estimate.equals('2 hours'): 'Expected task tags of "2 hours"'
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksSetEstimate('987654321', '987654321', '123456789', '2 hours')
         }
     }
 
@@ -717,6 +888,11 @@ class GroovyRtmTest {
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.locationId.equals('123456'): 'Expected task location ID of "123456"'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksSetLocation('987654321', '987654321', '123456789', '12345')
+        }
     }
 
     @Test void testTasksSetName() {
@@ -739,6 +915,11 @@ class GroovyRtmTest {
             def task = instance.tasksSetName('987654321', '987654321', '123456789', 'Get Bananas')
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.name.equals('Get Bananas'): 'Expected task name "Get Bananas"'
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksSetName('987654321', '987654321', '123456789', 'Get Bananas')
         }
     }
 
@@ -763,6 +944,11 @@ class GroovyRtmTest {
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.priority.equals('2'): 'Expected task priority of "2"'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksSetPriority('987654321', '987654321', '123456789', '2')
+        }
     }
 
     @Test void testTasksSetRecurrence() {
@@ -786,6 +972,11 @@ class GroovyRtmTest {
             def task = instance.tasksSetRecurrence('387546', '648042', '811467', 'every 1 day')
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.repeat.equals('FREQ=DAILY;INTERVAL=1'): 'Expected task repeat of "FREQ=DAILY;INTERVAL=1"'
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksSetRecurrence('387546', '648042', '811467', 'every 1 day')
         }
     }
 
@@ -814,6 +1005,11 @@ class GroovyRtmTest {
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.tags.join(', ').equals('coffee, good, mmm'): 'Expected tags of "coffee, good, mmm"'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksSetTags('987654321', '987654321', '123456789', 'coffee, good, mmm')
+        }
     }
 
     @Test void testTasksSetUrl() {
@@ -837,6 +1033,11 @@ class GroovyRtmTest {
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert task.url.equals('http://eriwen.com'): 'Expected task URL "http://eriwen.com"'
         }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksSetUrl('987654321', '987654321', '123456789', 'http://eriwen.com')
+        }
     }
 
     @Test void testTasksUncomplete() {
@@ -859,6 +1060,11 @@ class GroovyRtmTest {
             def task = instance.tasksUncomplete('987654321', '987654321', '123456789')
             assert task instanceof Task : 'Expected Map return type, but got ' + task.class.toString()
             assert !task.completed: 'Expected blank task completed'
+        }
+
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.tasksUncomplete('987654321', '987654321', '123456789')
         }
     }
 
@@ -900,6 +1106,11 @@ class GroovyRtmTest {
             def time = instance.timeConvert('123', '234', null)
             assert time.equals('2009-05-07T10:00:00') : 'Expected date-time value of "2009-05-07T10:00:00"'
         }
+
+        mockGroovyRtm.execMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.timeConvert('123', '234', null)
+        }
     }
 
     @Test void testTimeParse() {
@@ -907,6 +1118,11 @@ class GroovyRtmTest {
         play {
             def time = instance.timeParse('2009-05-07T10:00:00', null, false)
             assert time.equals('2009-05-10T07:00:00Z') : 'Expected date-time value of "2009-05-10T07:00:00Z"'
+        }
+
+        mockGroovyRtm.execMethod(match{it}).returns(null).once()
+        play {
+            assertNull instance.timeParse('2009-05-07T10:00:00', null, false)
         }
     }
 
