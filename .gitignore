@@ -1,4 +1,7 @@
-/.idea*
-out*
-build*
+.idea
+.gradle
+.clover
+out
+build
 Groovyrtm.iml
+stacktrace.log
