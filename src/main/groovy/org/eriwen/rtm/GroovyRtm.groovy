@@ -85,12 +85,12 @@ public class GroovyRtm {
      * @throws GroovyRtmException when the HTTP request failed
      */
     public GPathResult execMethod(List params) throws GroovyRtmException {
-        if (!this.currentUser) {
+        if (!currentUser) {
             throw new GroovyRtmException("Error: You must set currentUser before invoking authenticated methods!")
-        } else if (!isAuthenticated(this.currentUser)) {
-            throw new GroovyRtmException("Error: ${this.currentUser} is not authenticated!")
+        } else if (!isAuthenticated(currentUser)) {
+            throw new GroovyRtmException("Error: ${currentUser} is not authenticated!")
         }
-        params << "auth_token=" + getAuthToken(this.currentUser)
+        params << "auth_token=" + getAuthToken(currentUser)
         execUnauthenticatedMethod(params)
     }
 

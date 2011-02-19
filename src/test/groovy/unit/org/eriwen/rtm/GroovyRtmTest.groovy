@@ -1,12 +1,14 @@
-package org.eriwen.rtm.test
+package org.eriwen.rtm
 
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import static org.junit.Assert.*
 
 import org.gmock.WithGMock
 
 import org.eriwen.rtm.GroovyRtm
+import org.eriwen.rtm.GroovyRtmException
 import org.eriwen.rtm.model.*
 
 /**
@@ -19,16 +21,61 @@ import org.eriwen.rtm.model.*
 class GroovyRtmTest {
     def mockGroovyRtm = null
     private static GroovyRtm instance = null
+    private final String testUser = 'bogus'
 
     @Before void setUp() {
         instance = new GroovyRtm('config/GroovyRtm.properties')
-        instance.currentUser = 'bogus'
+        instance.currentUser = testUser
         mockGroovyRtm = mock(instance)
         mockGroovyRtm.addCommonParams(match{it}).returns([:]).stub()
     }
     @After void tearDown() {
         mockGroovyRtm = null
         instance = null
+    }
+
+    @Test void testAlternateConstruction() {
+        def testApiKey = 'bogus'
+        def testSharedSecret = 'alsobogus'
+        instance = new GroovyRtm(testApiKey, testSharedSecret, 'delete')
+        assert instance.apiKey == testApiKey : 'Should have set api key'
+        assert instance.secret == testSharedSecret : 'Should have set shared secret'
+    }
+
+    @Test(expected=GroovyRtmException.class) void testExecMethodWithNoUser() {
+        instance.currentUser = ''
+        instance.execMethod([])
+        fail 'Expected GroovyRtmException'
+    }
+
+    @Test(expected=GroovyRtmException.class) void testExecMethodUnauthenticated() {
+        // NOTE: unauthenticated by default
+        instance.execMethod([])
+        fail 'Expected GroovyRtmException'
+    }
+
+    @Test void testExecMethod() {
+        mockGroovyRtm.execUnauthenticatedMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><method>rtm.test.echo</method></rsp>')).once()
+        mockGroovyRtm.isAuthenticated(testUser).returns(true).once()
+        play {
+            assert instance.execMethod(['bogus']) : 'Should return non-null GPathResult'
+        }
+    }
+
+    @Test void testExecTimelineMethod() {
+        // Should create timeline as it doesn't exist
+        mockGroovyRtm.timelinesCreate().returns('1234').once()
+        mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><method>rtm.test.echo</method></rsp>')).once()
+        play {
+            assert instance.execTimelineMethod(['bogus']) : 'Should return non-null GPathResult'
+        }
+
+        // Timeline should already exist, do not call
+        mockGroovyRtm.timelinesCreate(match{it}).never()
+        mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><method>rtm.test.echo</method></rsp>')).once()
+        play {
+            assert instance.execTimelineMethod(['bogus']) : 'Should return non-null GPathResult'
+        }
     }
 
     @Test void testTestEcho() {

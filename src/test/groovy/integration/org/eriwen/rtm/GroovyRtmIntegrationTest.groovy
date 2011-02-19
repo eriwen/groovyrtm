@@ -1,4 +1,4 @@
-package org.eriwen.rtm.test.integration
+package org.eriwen.rtm
 
 import org.junit.After
 import org.junit.Before

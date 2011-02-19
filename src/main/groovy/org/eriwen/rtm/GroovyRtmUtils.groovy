@@ -117,7 +117,6 @@ public class GroovyRtmUtils {
         def connection = urlstr.toURL().openConnection()
         if (connection.responseCode == 200) {
             def responseText = connection.content.text
-          println responseText
             return responseText
         } else if (connection.responseCode == -1) {
             throw new GroovyRtmException("Invalid URL: '${urlstr}' -- Ususally caused by not setting an API Key")
