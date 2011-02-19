@@ -1,6 +1,4 @@
-.idea*
+/.idea*
 out*
 build*
-*.iml
-*.iws
-*.ipr
+Groovyrtm.iml
