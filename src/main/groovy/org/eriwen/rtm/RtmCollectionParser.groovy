@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Eric Wendelin
+ *  Copyright 2009-2011 Eric Wendelin
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -310,7 +310,7 @@ class RtmCollectionParser {
      * ['timezone':'Australia/Sydney', 'dateformat':'0', 'timeformat': '0', 'defaultlist':'123456']
      */
     public LinkedHashMap<String, String> parseSettings(GPathResult settingsXml) {
-        if (!settingsXml && !settingsXml.@stat.equals("ok")) {
+        if (!(settingsXml && settingsXml.@stat.equals("ok"))) {
             return null
         }
         def settings = settingsXml.settings
@@ -345,7 +345,7 @@ class RtmCollectionParser {
      * ]
      */
     public List<Timezone> parseTimezones(GPathResult timezonesXml) {
-        if (!timezonesXml && !timezonesXml.@stat.equals("ok")) {
+        if (!(timezonesXml && timezonesXml.@stat.equals("ok"))) {
             return null
         }
         def timezones = []

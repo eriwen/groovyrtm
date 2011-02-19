@@ -185,7 +185,7 @@ public class GroovyRtmUtils {
      * @param dateStr the date to parse as a String
      * @return Friendly date like "Tuesday" or "Mar 9" or "11:00AM"
      */
-    public String formatFriendlyDate(String dateStr, boolean hasDueTime, Integer timezoneOffset) {
+    public String formatFriendlyDate(String dateStr, boolean hasDueTime, Integer timezoneOffset = 0) {
         long nowMillis = getCurrentDayMillisAtMidnight(timezoneOffset);
         Date taskDate;
 
@@ -222,10 +222,10 @@ public class GroovyRtmUtils {
         }
         return friendlyDate;
     }
-
-    public String formatFriendlyDate(String dateStr, boolean hasDueTime) {
-        return formatFriendlyDate(dateStr, hasDueTime, 0);
-    }
+//
+//    public String formatFriendlyDate(String dateStr, boolean hasDueTime) {
+//        return formatFriendlyDate(dateStr, hasDueTime, 0);
+//    }
 
     /**
      * Given a String representing the RTM repeat, return a friendly repeat
@@ -236,7 +236,7 @@ public class GroovyRtmUtils {
      */
     public String formatFriendlyRepeat(String repeatStr) {
         //Format is FREQ=MONTHLY;INTERVAL=1 or INTERVAL=4;FREQ=DAILY
-        if (repeatStr == null || repeatStr.equals("")) {
+        if (!repeatStr) {
             return "";
         }
         def repeatTerms = repeatStr.split(";");
@@ -269,7 +269,7 @@ public class GroovyRtmUtils {
      */
     public boolean isOverdue(String dateStr, int timezoneOffset) {
         //Check for null date
-        if (dateStr == null || dateStr.equals("")) {
+        if (!dateStr) {
             return false;
         }
         Date taskDate;

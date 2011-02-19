@@ -34,9 +34,15 @@ class GroovyRtmUtilsTest {
     }
 
     @Test void testGetResponseText() {
-        def response = instance.getResponseText('http://www.eriwen.com')
+        def response = instance.getResponseText('http://eriwen.com')
         assert response instanceof String : 'Expected String response but got ' + response.class.toString()
         assert response : 'Expected content returned but got nothing'
+    }
+
+    @Test(expected=GroovyRtmException.class) void testGetRtmResponseError() {
+        instance = [getResponseText: {'<rsp stat="fail"><err code="98" msg="bogus" /></rsp>'}] as GroovyRtmUtils
+        instance.getRtmResponse('bogus')
+        fail 'Should have gotten GroovyRtmException'
     }
 
     @Test void testIsError() {
@@ -60,16 +66,19 @@ class GroovyRtmUtilsTest {
             </rsp>
         ''')
         assert errMsg instanceof String : 'Expected String return type but got ' + errMsg.class.toString()
-        assert errMsg.equals('Login failed / Invalid auth token') : 'Wrong error message text'
+        assert errMsg == 'Login failed / Invalid auth token' : 'Wrong error message text'
     }
 
     @Test void testTrimString() {
         assertEquals 'Trim length is wrong', instance.trimString('12345', 3), '123'
+        assertEquals 'Should not trim strings under length', instance.trimString('123', 3), '123'
         assertEquals 'Bad null processing', instance.trimString(null, 3), ''
         assertEquals 'Bad blank processing', instance.trimString('', 5), ''
     }
 
     @Test void testFormatFriendlyDate() {
+        assertEquals 'Never', instance.formatFriendlyDate(null, false)
+
         Date now = new Date()
         assertEquals 'Today', instance.formatFriendlyDate("${now.format(RAW_DATE_FORMAT)}T${now.format(RAW_TIME_FORMAT)}Z", false)
         assertEquals "${now.getHours().toString()}:${now.getMinutes().toString().padLeft(2, "0")}".toString(), instance.formatFriendlyDate("${now.format(RAW_DATE_FORMAT)}T${now.format(RAW_TIME_FORMAT)}Z", true)
@@ -84,6 +93,7 @@ class GroovyRtmUtilsTest {
     }
 
     @Test void testFormatFriendlyRepeat() {
+        assertEquals '', instance.formatFriendlyRepeat(null)
         assertEquals 'every 1 month', instance.formatFriendlyRepeat('FREQ=MONTHLY;INTERVAL=1')
         assertEquals 'every 4 days', instance.formatFriendlyRepeat('INTERVAL=4;FREQ=DAILY')
         assertEquals 'every 2 weeks', instance.formatFriendlyRepeat('INTERVAL=2;FREQ=WEEKLY')
@@ -91,6 +101,8 @@ class GroovyRtmUtilsTest {
     }
 
     @Test void testIsOverdue() {
+        assert !(instance.isOverdue(null, 0))
+
         Date now = new Date()
         assert !(instance.isOverdue("${now.format(RAW_DATE_FORMAT)}T${now.format(RAW_TIME_FORMAT)}Z", 0))
 

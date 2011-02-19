@@ -3,6 +3,7 @@ package org.eriwen.rtm
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import static org.junit.Assert.*
 
 import groovy.util.slurpersupport.GPathResult
 import org.eriwen.rtm.RtmCollectionParser
@@ -25,6 +26,8 @@ class RtmCollectionParserTest {
     }
 
     @Test void testParseTask() {
+        assertNull instance.parseTask(null)
+
         GPathResult resp = new XmlSlurper().parseText('''
             <rsp stat="ok">
                 <transaction id="123"/>
@@ -61,6 +64,8 @@ class RtmCollectionParserTest {
     }
 
     @Test void testParseTaskList() {
+        assert instance.parseTaskList(null) == [] : 'Null result should return empty list'
+
         GPathResult resp = new XmlSlurper().parseText('''
             <rsp stat="ok">
               <tasks>
@@ -112,6 +117,8 @@ class RtmCollectionParserTest {
     }
 
     @Test void testParseList() {
+        assertNull instance.parseList(null)
+
         GPathResult resp = new XmlSlurper().parseText('''
             <rsp stat="ok">
                 <transaction id="234"/>
@@ -131,6 +138,8 @@ class RtmCollectionParserTest {
     }
 
     @Test void testParseLists() {
+        assertNull instance.parseLists(null)
+
         GPathResult resp = new XmlSlurper().parseText('''
             <rsp stat="ok">
                 <lists>
@@ -152,6 +161,8 @@ class RtmCollectionParserTest {
     }
 
     @Test void testParseNote() {
+        assertNull instance.parseNote(null)
+        
         GPathResult resp = new XmlSlurper().parseText('''
             <rsp stat="ok">
                 <transaction id="234"/>
@@ -168,6 +179,8 @@ class RtmCollectionParserTest {
     }
 
     @Test void testParseSettings() {
+        assertNull instance.parseSettings(null)
+        
         GPathResult resp = new XmlSlurper().parseText('''
             <rsp stat="ok">
                 <settings>
@@ -191,6 +204,8 @@ class RtmCollectionParserTest {
     }
 
     @Test void testParseTimezones() {
+        assertNull instance.parseTimezones(null)
+
         GPathResult resp = new XmlSlurper().parseText('''
             <rsp stat="ok">
                 <timezones>
