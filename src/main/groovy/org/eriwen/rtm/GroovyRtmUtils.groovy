@@ -21,7 +21,6 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import org.apache.commons.codec.binary.Hex
 import groovy.util.slurpersupport.GPathResult
-import org.eriwen.rtm.model.Task
 
 /**
  * Utilities that are common to API elements without being tied to a specific

@@ -36,7 +36,7 @@ class RtmCollectionParserTest {
                              name="Get Bananas" source="api" location_id="234" url="http://eriwen.com">
                     <rrule every="1">FREQ=DAILY;INTERVAL=1</rrule>
                     <tags><tag>yay</tag><tag>bananas</tag></tags>
-                    <participants/>
+                    <participants><participant>omar</participant></participants>
                     <notes/>
                     <task id="102" due="2009-05-07T10:19:54Z" has_due_time="1" added="2009-05-07T10:19:54Z"
                          completed="" deleted="" priority="2" postponed="0" estimate="4 hours"/>
@@ -84,7 +84,7 @@ class RtmCollectionParserTest {
                         <tag>mmm</tag>
                         <tag>tasty</tag>
                     </tags>
-                    <participants/>
+                    <participants><participant>omar</participant></participants>
                     <notes/>
                     <task id="104" due="" has_due_time="0" added="2009-05-07T10:19:54Z"
                          completed="" deleted="" priority="2" postponed="1" estimate="3 hrs"/>

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Eric Wendelin
+ *  Copyright 2010-2011 Eric Wendelin
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package org.eriwen.rtm
  *
  * @author <a href="http://eriwen.com">Eric Wendelin</a>
  */
-public class GroovyRtmException extends Exception {
+public class GroovyRtmException extends RuntimeException {
     String message
     public GroovyRtmException(String message) {
         super(message)

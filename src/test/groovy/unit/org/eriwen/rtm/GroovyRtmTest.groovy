@@ -585,6 +585,32 @@ class GroovyRtmTest {
         }
     }
 
+    @Test void testTasksAddNoParams() {
+        mockGroovyRtm.execTimelineMethod(match{it}).returns(new XmlSlurper().parseText('''
+            <rsp stat="ok">
+                <transaction id="123"/>
+                <list id="100">
+                  <taskseries id="101" created="2009-05-07T10:19:54Z" modified="2009-05-07T10:19:54Z"
+                             name="Get Bananas" source="api">
+                    <tags/>
+                    <participants/>
+                    <notes/>
+                    <task id="102" due="" has_due_time="0" added="2009-05-07T10:19:54Z"
+                         completed="" deleted="" priority="N" postponed="0" estimate=""/>
+                  </taskseries>
+                </list>
+            </rsp>
+        ''')).once()
+        play {
+            def task = instance.tasksAdd('Get Bananas', null, null, null, null, null, null, null)
+            assert task.transactionId.equals('123'): 'Expected transaction ID of "123"'
+            assert task.name.equals('Get Bananas'): 'Expected name "Get Bananas"'
+            assert task.listId.equals('100'): 'Expected list ID of "987654321"'
+            assert task.taskSeriesId.equals('101'): 'Expected task series ID of "987654321"'
+            assert task.taskId.equals('102'): 'Expected task ID of "123456789"'
+        }
+    }
+
     @Test void testTasksAddTags() {
         mockGroovyRtm.execTimelineMethod(match{it}).returns(new XmlSlurper().parseText('''
             <rsp stat="ok">
@@ -670,6 +696,33 @@ class GroovyRtmTest {
         mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
         play {
             assertNull instance.tasksDelete('987654321', '987654321', '123456789')
+        }
+    }
+
+    @Test void testTasksGetListFiltered() {
+        mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('''
+            <rsp stat="ok">
+              <tasks>
+                <list id="105">
+                  <taskseries id="106" created="2009-05-07T10:19:54Z" modified="2009-05-07T10:19:54Z"
+                             name="Do Some Work" source="api">
+                    <tags/>
+                    <participants/>
+                    <notes/>
+                    <task id="107" due="" has_due_time="0" added="2009-05-07T10:19:54Z"
+                         completed="" deleted="" priority="3" postponed="0" estimate="4 hrs"/>
+                  </taskseries>
+                </list>
+              </tasks>
+            </rsp>
+        ''')).once()
+        play {
+            def tasks = instance.tasksGetList('105', 'priority:3', '2009-05-07T10:19:50Z')
+            assert tasks instanceof List<Task> : 'Expected List return type, but got ' + tasks.class.toString()
+            assert tasks.size() == 1 : 'Expected 1 tasks returned but got ' + tasks.size()
+            assert tasks[0].name.equals('Do Some Work') : 'Expected first task name "Get Bananas" but got ' + tasks[0].name
+            assert tasks[0].listId.equals('105') : 'Expected first task list id of "100" but got ' + tasks[0].listId
+            assert tasks[0].priority.equals('3') : 'Expected first task priority of "3" but got ' + tasks[0].priority
         }
     }
 
@@ -899,7 +952,7 @@ class GroovyRtmTest {
 
         mockGroovyRtm.execTimelineMethod(match{it}).returns(null).once()
         play {
-            assertNull instance.tasksSetDueDate('987654321', '987654321', '123456789', '2009-05-08T10:19:54Z', true, false)
+            assertNull instance.tasksSetDueDate('987654321', '987654321', '123456789', null, false, true)
         }
     }
 

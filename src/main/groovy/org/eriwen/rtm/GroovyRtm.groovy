@@ -17,7 +17,6 @@ package org.eriwen.rtm
 
 import java.util.prefs.Preferences
 import groovy.util.slurpersupport.GPathResult
-import org.eriwen.rtm.*
 import org.eriwen.rtm.model.*
 import org.xml.sax.SAXParseException
 
