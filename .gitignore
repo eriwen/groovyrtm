@@ -3,5 +3,6 @@
 .clover
 out
 build
-Groovyrtm.iml
+*.iml
+*.ipr
 stacktrace.log
