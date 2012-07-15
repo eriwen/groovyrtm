@@ -101,7 +101,7 @@ class GroovyRtmTest {
         instance.testEcho()
         long end = System.currentTimeMillis()
         //Should enforce that there was at least a 1 second gap between calls
-        assert end - start >= 2000 : 'Expected time to complete >= 2000ms but got ' + (end - start)
+        assert end - start >= 1000 : 'Expected time to complete >= 1000ms but got ' + (end - start)
     }
 
     @Test void testTestLogin() {
@@ -773,7 +773,7 @@ class GroovyRtmTest {
             assert tasks[0].priority.equals('N') : 'Expected first task priority of "N" but got ' + tasks[0].priority
         }
     }
-    
+
     @Test void testTasksMovePriority() {
         mockGroovyRtm.execTimelineMethod(match{it}).returns(new XmlSlurper().parseText('''
             <rsp stat="ok">
