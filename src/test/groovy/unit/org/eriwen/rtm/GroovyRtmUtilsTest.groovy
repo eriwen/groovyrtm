@@ -34,7 +34,7 @@ class GroovyRtmUtilsTest {
     }
 
     @Test(expected=GroovyRtmException.class) void testGetResponseTextInvalidSite() {
-        instance.getResponseText('http://eriwen.com/404')
+        instance.getResponseText('http://google.com/404')
         fail 'Should have gotten GroovyRtmException'
     }
 
@@ -87,7 +87,7 @@ class GroovyRtmUtilsTest {
         Date now = new Date()
         assertEquals 'Today', instance.formatFriendlyDate("${now.format(RAW_DATE_FORMAT)}T${now.format(RAW_TIME_FORMAT)}Z", false)
         assertEquals "${now.getHours().toString()}:${now.getMinutes().toString().padLeft(2, "0")}".toString(), instance.formatFriendlyDate("${now.format(RAW_DATE_FORMAT)}T${now.format(RAW_TIME_FORMAT)}Z", true)
-        
+
         now++ //Add a day
         assertEquals 'Tomorrow', instance.formatFriendlyDate("${now.format(RAW_DATE_FORMAT)}T${now.format(RAW_TIME_FORMAT)}Z", false)
 
