@@ -3,6 +3,7 @@
 .clover
 out
 build
+*.iws
 *.iml
 *.ipr
 stacktrace.log
