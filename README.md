@@ -1,4 +1,4 @@
-# Welcome to GroovyRTM! #
+# Groovy [Remember The Milk](http://www.rememberthemilk.com)! [![Build Status](https://buildhive.cloudbees.com/job/eriwen/job/groovyrtm/badge/icon)](https://buildhive.cloudbees.com/job/eriwen/job/groovyrtm/)
 
 GroovyRTM allows you to easily take advantage of the Remember The Milk REST API
 using any language on the JVM. In short, you can now write apps for Remember The
@@ -6,7 +6,7 @@ Milk without having to worry about all the HTTP transaction stuff, error
 handling, etc. As its name implies, it's written in Groovy, which made it much
 easier to write and test.
 
-## Getting Started: ##
+## Getting Started:
 
 You need 2 things to create a app using GroovyRTM:
 
