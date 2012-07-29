@@ -7,8 +7,6 @@ import static org.junit.Assert.*
 
 import org.gmock.WithGMock
 
-import org.eriwen.rtm.GroovyRtm
-import org.eriwen.rtm.GroovyRtmException
 import org.eriwen.rtm.model.*
 
 /**
@@ -16,7 +14,6 @@ import org.eriwen.rtm.model.*
  *
  * @author <a href="http://eriwen.com">Eric Wendelin</a>
  */
-
 @WithGMock
 class GroovyRtmTest {
     def mockGroovyRtm = null
