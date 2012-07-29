@@ -13,11 +13,13 @@ You need 2 things to create a app using GroovyRTM:
 * An API key at [http://www.rememberthemilk.com/services/api/keys.rtm](http://www.rememberthemilk.com/services/api/keys.rtm) (You'll need an RTM account to test)
 * The _groovyrtm.jar_ file, available on Maven Central or as a [download from GitHub](https://github.com/eriwen/groovyrtm/downloads).
 
-```groovy Gradle/Grails
+Gradle/Grails build config
+```groovy
 compile 'com.eriwen:groovyrtm:2.1.2'
 ```
 
-```xml Maven
+Maven config
+```xml
 <dependency>
     <groupId>com.eriwen</groupId>
     <artifactId>groovyrtm</artifactId>
