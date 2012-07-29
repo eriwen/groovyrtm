@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>GroovyRTM by eriwen</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>GroovyRTM</h1>
+        <h2>Java/Groovy API for Remember The Milk</h2>
+        <a href="https://github.com/eriwen/groovyrtm" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>A <a href="http://www.rememberthemilk.com">Remember The Milk</a> API for Java-based projects!</h1>
+
+<p>GroovyRTM allows you to easily take advantage of the Remember The Milk REST API
+using any language on the JVM. In short, you can now write apps for Remember The
+Milk without having to worry about all the HTTP transaction stuff, error
+handling, etc. As its name implies, it's written in Groovy, which made it much
+easier to write and test.</p>
+
+<h2>Getting Started:</h2>
+
+<p>You need 2 things to create a app using GroovyRTM:</p>
+
+<ul>
+<li>An API key at <a href="http://www.rememberthemilk.com/services/api/keys.rtm">http://www.rememberthemilk.com/services/api/keys.rtm</a> (You'll need an RTM account to test)</li>
+<li>The <em>groovyrtm.jar</em> file, available on Maven Central or as a <a href="https://github.com/eriwen/groovyrtm/downloads">download from GitHub</a>.</li>
+</ul><p>Gradle/Grails build config</p>
+
+<div class="highlight"><pre><span class="n">compile</span> <span class="s1">'com.eriwen:groovyrtm:2.1.2'</span>
+</pre></div>
+
+<p>Maven config</p>
+
+<div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>com.eriwen<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>groovyrtm<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.1.2<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+
+<h2>Simple Example Java Application:</h2>
+
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">org.eriwen.rtm.*</span><span class="o">;</span>
+<span class="kd">class</span> <span class="nc">MyGroovyRtmTest</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">GroovyRtm</span> <span class="n">groovyrtm</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GroovyRtm</span><span class="o">(</span><span class="s">"&lt;api key&gt;"</span><span class="o">,</span><span class="s">"&lt;shared secret&gt;"</span><span class="o">);</span>
+        <span class="n">groovyrtm</span><span class="o">.</span><span class="na">testEcho</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<h2>Authentication Example:</h2>
+
+<div class="highlight"><pre><span class="kn">package</span> <span class="n">groovyrtmauth</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.awt.Desktop</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.net.*</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.eriwen.rtm.*</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyGroovyRtmTest</span> <span class="o">{</span>
+   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+       <span class="n">GroovyRtm</span> <span class="n">rtm</span> <span class="o">=</span> <span class="k">new</span> <span class="n">GroovyRtm</span><span class="o">(</span><span class="s">"myapikey"</span><span class="o">,</span> <span class="s">"mysharedsecret"</span><span class="o">);</span>
+       <span class="k">try</span> <span class="o">{</span>
+           <span class="k">if</span> <span class="o">(!</span><span class="n">rtm</span><span class="o">.</span><span class="na">isAuthenticated</span><span class="o">())</span> <span class="o">{</span>
+               <span class="c1">// Start login process by getting the authorization URL</span>
+               <span class="k">try</span> <span class="o">{</span>
+                   <span class="n">String</span> <span class="n">authUrl</span> <span class="o">=</span> <span class="n">rtm</span><span class="o">.</span><span class="na">getAuthUrl</span><span class="o">();</span>
+                   <span class="k">if</span> <span class="o">(</span><span class="n">Desktop</span><span class="o">.</span><span class="na">isDesktopSupported</span><span class="o">())</span> <span class="o">{</span>
+                       <span class="c1">// Open the auth web page</span>
+                       <span class="n">Desktop</span> <span class="n">desktop</span> <span class="o">=</span> <span class="n">Desktop</span><span class="o">.</span><span class="na">getDesktop</span><span class="o">();</span>
+                       <span class="n">desktop</span><span class="o">.</span><span class="na">browse</span><span class="o">(</span><span class="k">new</span> <span class="n">URI</span><span class="o">(</span><span class="n">authUrl</span><span class="o">));</span>
+                       <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"I've just opened a web page so you can authorize Groovy RTM"</span><span class="o">);</span>
+                   <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                       <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Please open "</span> <span class="o">+</span> <span class="n">authUrl</span> <span class="o">+</span> <span class="s">" in a web browser to authorize Groovy RTM"</span><span class="o">);</span>
+                   <span class="o">}</span>
+                   <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Press any key when done..."</span><span class="o">);</span>
+                   <span class="c1">//TODO: Put your application logic or button here so users can click a button when done</span>
+                   <span class="n">System</span><span class="o">.</span><span class="na">in</span><span class="o">.</span><span class="na">read</span><span class="o">();</span>
+                   <span class="c1">// GroovyRTM automatically stores the auth token</span>
+                   <span class="n">String</span> <span class="n">authToken</span> <span class="o">=</span> <span class="n">rtm</span><span class="o">.</span><span class="na">authGetToken</span><span class="o">();</span>
+                   <span class="k">if</span> <span class="o">(</span><span class="n">authToken</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                       <span class="c1">// We're golden!</span>
+                       <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Groovy RTM successfully authorized!!"</span><span class="o">);</span>
+                   <span class="o">}</span>
+               <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">URISyntaxException</span> <span class="n">ue</span><span class="o">)</span> <span class="o">{</span>
+                   <span class="n">ue</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+               <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">ioe</span><span class="o">)</span> <span class="o">{</span>
+                   <span class="n">ioe</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+               <span class="o">}</span>
+           <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+               <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Groovy RTM already authorized!"</span><span class="o">);</span>
+           <span class="o">}</span>
+       <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">GroovyRtmException</span> <span class="n">rse</span><span class="o">)</span> <span class="o">{</span>
+           <span class="n">rse</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+       <span class="o">}</span>
+   <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<h2>Quick-start Project:</h2>
+
+<p>Download a NetBeans project setup with the latest GroovyRTM JAR and optimal project structure <a href="http://cloud.github.com/downloads/emwendelin/groovyrtm/GroovyRtmAuth.zip">here</a>. Project also includes RTM authorization code to help you start even faster!</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/eriwen/groovyrtm/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/eriwen/groovyrtm/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/eriwen/groovyrtm"></a> is maintained by <a href="https://github.com/eriwen">eriwen</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
