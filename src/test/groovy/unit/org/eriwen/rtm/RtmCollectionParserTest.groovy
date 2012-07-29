@@ -6,7 +6,6 @@ import org.junit.Test
 import static org.junit.Assert.*
 
 import groovy.util.slurpersupport.GPathResult
-import org.eriwen.rtm.RtmCollectionParser
 import org.eriwen.rtm.model.*
 
 /**
@@ -14,7 +13,6 @@ import org.eriwen.rtm.model.*
  *
  * @author <a href="http://eriwen.com">Eric Wendelin</a>
  */
-
 class RtmCollectionParserTest {
     private static RtmCollectionParser instance = null
 
@@ -162,7 +160,7 @@ class RtmCollectionParserTest {
 
     @Test void testParseNote() {
         assertNull instance.parseNote(null)
-        
+
         GPathResult resp = new XmlSlurper().parseText('''
             <rsp stat="ok">
                 <transaction id="234"/>
@@ -180,7 +178,7 @@ class RtmCollectionParserTest {
 
     @Test void testParseSettings() {
         assertNull instance.parseSettings(null)
-        
+
         GPathResult resp = new XmlSlurper().parseText('''
             <rsp stat="ok">
                 <settings>

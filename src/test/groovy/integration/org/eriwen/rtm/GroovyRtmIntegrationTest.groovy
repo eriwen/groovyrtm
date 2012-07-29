@@ -2,11 +2,11 @@ package org.eriwen.rtm
 
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
-
-import org.eriwen.rtm.GroovyRtm
-import org.eriwen.rtm.model.*
 import org.junit.Ignore
+import org.junit.Test
+import static org.junit.Assert.*
+
+import org.eriwen.rtm.model.*
 
 /**
  * Integration test class for <code>org.eriwen.rtm.GroovyRtm</code>
@@ -25,23 +25,17 @@ class GroovyRtmIntegrationTest {
     @After void tearDown() {
         instance = null
     }
-    
+
     @Test void testTestEcho() {
-        println 'testTestEcho()'
-        assert instance.testEcho() : 'echo unsuccessful'
+        assertTrue 'echo unsuccessful', instance.testEcho()
     }
 
     @Test void testGetAuthUrl() {
-        println 'testGetAuthUrl()'
-        def authUrl = instance.getAuthUrl()
-        assert authUrl instanceof String : 'expected String URL but got a different type'
-        assert authUrl : 'expected valid URL but got nothing'
+        assertNotNull 'expected valid URL but got nothing', instance.getAuthUrl()
     }
 
     @Ignore
     @Test void testGetNewAuthToken() {
-        println 'testGetNewAuthToken()'
-
         instance.removeAuthToken()
         def authUrl = instance.getAuthUrl()
 
@@ -58,44 +52,38 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTestLogin() {
-        println 'testTestLogin()'
-        boolean success = instance.testLogin()
-        assert success : 'login unsuccessful'
+        assert instance.testLogin() : 'login unsuccessful'
     }
-    
+
     @Ignore
     @Test void testContactsGetList() {
-        println 'testContactsGetList()'
         def contacts = instance.contactsGetList()
         assert contacts instanceof List
     }
 
     @Ignore
     @Test void testContactsAdd() {
-        println 'testAddContact()'
         //NOTE: Assumes at least 1 existing contact. This is done to prevent
         //having to store a static user ID here
         def contact = instance.contactsGetList()[0]
-        assert instance.contactsDelete(contact['id']) : 'delete contact returned null, expected transactionId'
+        assert instance.contactsDelete(contact['id'].toString()) : 'delete contact returned null, expected transactionId'
         assert !(instance.contactsGetList().find{it.username.equals(contact['username'])}) : 'contact should not exist'
-        assert instance.contactsAdd(contact['username']) : 'add contact returned null, expected transactionId'
+        assert instance.contactsAdd(contact['username'].toString()) : 'add contact returned null, expected transactionId'
         assert instance.contactsGetList().find{it.username.equals(contact['username'])} : 'contact should exist'
     }
 
     @Ignore
     @Test void testContactsDelete() {
-        println 'testDeleteContact()'
-        //NOTE: Assumes at least 1 existing contact. 
+        //NOTE: Assumes at least 1 existing contact.
         def contact = instance.contactsGetList()[0]
-        assert instance.contactsDelete(contact['id']) : 'delete contact returned null, expected transactionId'
+        assert instance.contactsDelete(contact['id'].toString()) : 'delete contact returned null, expected transactionId'
         assert !(instance.contactsGetList().find{it.username.equals(contact['username'])}) : 'contact should not exist'
-        assert instance.contactsAdd(contact['username']) : 'add contact returned null, expected transactionId'
+        assert instance.contactsAdd(contact['username'].toString()) : 'add contact returned null, expected transactionId'
         assert instance.contactsGetList().find{it.username.equals(contact['username'])} : 'contact should exist'
     }
 
     @Ignore
     @Test void testGroupsAdd() {
-        println 'testGroupsAdd()'
         String groupName = 'test group add'
         def group = instance.groupsAdd(groupName)
         assert group : 'Expected transactionId returned but got: ' + group
@@ -105,11 +93,10 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testGroupsAddContact() {
-        println 'testGroupsAddContact()'
         String groupName = 'test group add contact'
         instance.groupsAdd(groupName)
         def groupId = instance.groupsGetGroupByName(groupName)['id']
-        //NOTE: Assumes at least 1 existing contact. 
+        //NOTE: Assumes at least 1 existing contact.
         def contactId = instance.contactsGetList()[0]['id']
         assert instance.groupsAddContact(contactId.toString(), groupId.toString())
         assert instance.groupsDelete(groupId.toString())
@@ -117,7 +104,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testGroupsDelete() {
-        println 'testGroupsDelete()'
         String groupName = 'test group delete'
         instance.groupsAdd(groupName)
         def groupId = instance.groupsGetGroupByName(groupName)['id']
@@ -126,10 +112,9 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testGroupsGetGroupByName() {
-        println 'testGroupsGetGroupByName()'
         String groupName = 'test group name'
         instance.groupsAdd(groupName)
-        group = instance.groupsGetGroupByName(groupName)
+        def group = instance.groupsGetGroupByName(groupName)
         assert group instanceof Map : 'wrong return type'
         assert group.get('id')
         assert group.get('name').equals(groupName)
@@ -138,14 +123,12 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testGroupsGetList() {
-        println 'testGroupsGetList()'
         def groupList = instance.groupsGetList()
         assert groupList instanceof List : 'expected List returned but got ' + groupList.class.toString()
     }
 
     @Ignore
     @Test void testGroupsRemoveContact() {
-        println 'testGroupsRemoveContact()'
         String groupName = 'test group remove contact'
         instance.groupsAdd(groupName)
         def groupId = instance.groupsGetGroupByName(groupName)['id']
@@ -157,7 +140,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testListsAdd() {
-        println 'testListsAdd()'
         String listName = 'Test List Add'
         def list = instance.listsAdd(listName)
         assert list : 'expected list to be returned but got ' + list
@@ -174,7 +156,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testListsArchive() {
-        println 'testListsArchive()'
         def list = instance.listsAdd('TestArchive')
         assert !list.archived : 'expected list archived == 0 but got ' + list.archived
         list = instance.listsArchive(list.id)
@@ -185,7 +166,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testListsDelete() {
-        println 'testListsDelete()'
         def list = instance.listsAdd('Test List Delete')
         assert list : 'expected list to be returned but got ' + list
         assert !list.deleted : 'expected list deleted to be 0 but got ' + list.deleted
@@ -196,7 +176,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testListsGetList() {
-        println 'testListsGetList()'
         def lists = instance.listsGetList()
         assert lists instanceof List<TaskList> : 'wrong return type'
         assert lists && lists != 'null' : 'lists cannot be null'
@@ -205,7 +184,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testListsGetListByName() {
-        println 'testListsGetListByName()'
         def list = instance.listsGetListByName('Inbox')
         assert list instanceof TaskList : 'wrong return type'
         assert list.id : 'List should have associated ID'
@@ -214,7 +192,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testListsSetDefaultList() {
-        println 'testListsSetDefaultList()'
         String listName = 'TestSetDefault'
         def list = instance.listsAdd(listName)
         def result = instance.listsSetDefaultList(list.id)
@@ -224,7 +201,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testListsSetName() {
-        println 'testListsSetName()'
         String listName = 'Test Set Name'
         String newListName = 'Test New Name'
         def list = instance.listsAdd(listName)
@@ -237,7 +213,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testListsUnarchive() {
-        println 'testListsUnarchive()'
         def list = instance.listsAdd('TestUnarchive')
         assert instance.listsArchive(list.id)
         list = instance.listsUnarchive(list.id)
@@ -248,7 +223,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testLocationsGetLocationByName() {
-        println 'testLocationsGetLocationByName()'
         // Get location list
         def location = instance.locationsGetList()[0]
         def locationByName = instance.locationsGetLocationByName(location['name'])
@@ -260,7 +234,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testLocationsGetList() {
-        println 'testLocationsGetList()'
         def locations = instance.locationsGetList()
         assert locations : 'Locations should not be null'
         assert locations instanceof List
@@ -270,7 +243,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testSettingsGetList() {
-        println 'testSettingsGetList()'
         def settings = instance.settingsGetList()
         assert settings
         assert settings instanceof Map
@@ -278,7 +250,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksAdd() {
-        println 'testTasksAdd()'
         def taskName = 'test tasks add'
         def task = instance.tasksAdd(taskName)
         assert task : 'task could not be added'
@@ -289,7 +260,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksSmartAdd() {
-        println 'testTasksSmartAdd()'
         def taskName = 'test tasks smart add !2 #coffee'
         def task = instance.tasksAdd(taskName, null, true)
         assert task : 'task could not be added'
@@ -302,7 +272,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksAddAllParams() {
-        println 'testTasksAddAllParams()'
         def taskName = 'test tasks add all params'
         def taskPriority = '2'
         def taskDue = '07/15/2009'
@@ -334,7 +303,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksAddTags() {
-        println 'testTasksAddTags()'
         def task = instance.tasksAdd('test tasks add tags')
         assert task : 'task should have been added'
         task = instance.tasksAddTags(task.listId, task.taskSeriesId, task.taskId, 'testing, tasks')
@@ -346,7 +314,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksComplete() {
-        println 'testTasksComplete()'
         def task = instance.tasksAdd('test tasks complete')
         assert task && !task.completed : 'expected blank completed but got ' + task.completed
         task = instance.tasksComplete(task.listId, task.taskSeriesId, task.taskId)
@@ -357,7 +324,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksDelete() {
-        println 'testTasksDelete()'
         def task = instance.tasksAdd('test tasks delete')
         assert task : 'task should have been added'
         assert !task.deleted : 'task should not be deleted yet'
@@ -368,7 +334,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksGetList() {
-        println 'testTasksGetList()'
         def task = instance.tasksAdd('test tasks get list')
         task = instance.tasksSetDueDate(task.listId, task.taskSeriesId, task.taskId, 'today', false, true)
         //Get All Tasks
@@ -378,10 +343,9 @@ class GroovyRtmIntegrationTest {
         assert tasks.size > 0 : 'Expected tasks length > 0 but got ' + taskList.length
         assert instance.tasksDelete(task.listId, task.taskSeriesId, task.taskId)
     }
-    
+
     @Ignore
     @Test void testTasksGetListFromList() {
-        println 'testTasksGetListFromList()'
         def task = instance.tasksAdd('test tasks get list from list')
         task = instance.tasksSetDueDate(task.listId, task.taskSeriesId, task.taskId, 'today', false, true)
         def list = instance.listsGetListByName('Inbox')
@@ -396,7 +360,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksGetSmartList() {
-        println 'testTasksGetSmartList()'
         def task = instance.tasksAdd('test tasks get smart list')
         task = instance.tasksSetDueDate(task.listId, task.taskSeriesId, task.taskId, 'today', false, true)
         //Tasks due today
@@ -408,7 +371,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksGetSmartListFromList() {
-        println 'testTasksGetSmartListFromList()'
         def task = instance.tasksAdd('test tasks get smart list from list')
         task = instance.tasksSetDueDate(task.listId, task.taskSeriesId, task.taskId, 'today', false, true)
         //Tasks in Inbox due today
@@ -422,7 +384,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksMovePriority() {
-        println 'testTasksMovePriority()'
         def task = instance.tasksAdd('test tasks move priority')
         assert task && task.priority.equals('N') : 'expected priority N but got ' + task.priority
         task = instance.tasksMovePriority(task.listId, task.taskSeriesId, task.taskId, 'up')
@@ -434,7 +395,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksMoveTo() {
-        println 'testTasksMoveTo()'
         def task = instance.tasksAdd('test tasks move')
         //Every account has an Inbox and a Sent list that can't be changed
         def inboxListId = instance.listsGetListByName('Inbox').id
@@ -447,7 +407,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksPostpone() {
-        println 'testTasksPostpone()'
         def task = instance.tasksAdd('test tasks postpone')
         assert task && !task.postponed : 'task should not be postponed'
         task = instance.tasksPostpone(task.listId, task.taskSeriesId, task.taskId)
@@ -457,7 +416,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksRemoveTags() {
-        println 'testTasksRemoveTags()'
         def task = instance.tasksAdd('test tasks remove tags')
         assert task : 'task should have been added'
         task = instance.tasksAddTags(task.listId, task.taskSeriesId, task.taskId, 'testing, tasks, remove')
@@ -469,7 +427,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksSetDueDate() {
-        println 'testTasksSetDueDate()'
         def task = instance.tasksAdd('test tasks set due')
         assert task && task.due.equals('') : 'expected blank due date but got ' + task.due
         task = instance.tasksSetDueDate(task.listId, task.taskSeriesId, task.taskId, '12/31/2010', false, true)
@@ -479,7 +436,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksSetEstimate() {
-        println 'testTasksSetEstimate()'
         def task = instance.tasksAdd('test tasks set estimate')
         assert task && task.estimate.equals('') : 'expected blank estimate date but got ' + task.estimate
         task = instance.tasksSetEstimate(task.listId, task.taskSeriesId, task.taskId, '2 hours')
@@ -489,7 +445,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksSetLocation() {
-        println 'testTasksSetLocation()'
         def task = instance.tasksAdd('test tasks set location')
         assert task && task.locationId.equals('') : 'expected blank location but got ' + task.locationId
         //NOTE: Assumes at least 1 location exists
@@ -501,7 +456,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksSetName() {
-        println 'testTasksSetName()'
         def task = instance.tasksAdd('test tasks set name')
         assert task && task.name.equals('test tasks set name') : 'expected test tasks set name but got ' + task.name
         task = instance.tasksSetName(task.listId, task.taskSeriesId, task.taskId, 'test renamed')
@@ -511,7 +465,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksSetPriority() {
-        println 'testTasksSetPriority()'
         def task = instance.tasksAdd('test tasks set priority')
         assert task && task.priority.equals('N') : 'expected no priority but got ' + task.priority
         task = instance.tasksSetPriority(task.listId, task.taskSeriesId, task.taskId, '2')
@@ -521,7 +474,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksSetRecurrence() {
-        println 'testTasksSetRecurrence()'
         def task = instance.tasksAdd('test tasks set repeat')
         assert task && !task.repeat : 'expected no repeat but got ' + task.repeat
         task = instance.tasksSetRecurrence(task.listId, task.taskSeriesId, task.taskId, 'every week')
@@ -531,7 +483,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksSetTags() {
-        println 'testTasksSetTags()'
         def task = instance.tasksAdd('test tasks set tags')
         assert task && task.tags.join(', ').equals('') : 'expected blank tags but got ' + task.tags.join(', ')
         task = instance.tasksSetTags(task.listId, task.taskSeriesId, task.taskId, 'testing')
@@ -541,7 +492,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksSetUrl() {
-        println 'testTasksSetUrl()'
         def task = instance.tasksAdd('test tasks set url')
         assert task && task.url.equals('') : 'expected blank url but got ' + task.url
         task = instance.tasksSetUrl(task.listId, task.taskSeriesId, task.taskId, 'http://eriwen.com')
@@ -551,7 +501,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksUncomplete() {
-        println 'testTasksUncomplete()'
         def task = instance.tasksAdd('test tasks uncomplete')
         assert task && !task.completed : 'expected blank completed but got ' + task.completed
         task = instance.tasksComplete(task.listId, task.taskSeriesId, task.taskId)
@@ -563,7 +512,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksNotesAdd() {
-        println 'testTasksNotesAdd()'
         String noteTitle = 'Test Note Title'
         String noteText = 'Test Note Text'
         def task = instance.tasksAdd('test tasks notes add')
@@ -578,7 +526,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksNotesDelete() {
-        println 'testTasksNotesDelete()'
         String noteTitle = 'Test Note Title'
         String noteText = 'Test Note Text'
         def task = instance.tasksAdd('test tasks notes delete')
@@ -590,7 +537,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTasksNotesEdit() {
-        println 'testTasksNotesEdit()'
         String noteTitle = 'Test Note Title'
         String noteText = 'Test Note Text'
         String newNoteTitle = 'New Title'
@@ -607,7 +553,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTimeConvert() {
-        println 'testTimeConvert()'
         //NOTE: We know there are a bunch of existing timezones
         def timezonesList = instance.timezonesGetList()
         String result = instance.timeConvert(timezonesList[2].name.toString(), timezonesList[7].name.toString())
@@ -616,21 +561,18 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTimeParse() {
-        println 'testTimeParse()'
         String time = instance.timeParse('6/15/2009')
         assert time.equals('2009-06-15T00:00:00Z')
     }
 
     @Ignore
     @Test void testTimelinesCreate() {
-        println 'testTimelinesCreate()'
         String timeline = instance.timelinesCreate()
         assert timeline : 'Unable to create timeline'
     }
 
     @Ignore
     @Test void testTimezonesGetList() {
-        println 'testTimezonesGetList()'
         def timezonesList = instance.timezonesGetList()
         assert timezonesList : 'timezones list cannot be empty'
         assert timezonesList instanceof List : 'wrong type returned, expecting List'
@@ -638,7 +580,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTimezonesGetTimezoneByName() {
-        println 'testTimezonesGetTimezoneByName()'
         def timezone = instance.timezonesGetTimezoneByName('Asia/Hong_Kong')
         assert timezone : 'timezone should not be null'
         assert timezone instanceof Timezone : 'wrong type returned, expecting LinkedHashMap'
@@ -647,7 +588,6 @@ class GroovyRtmIntegrationTest {
 
     @Ignore
     @Test void testTransactionsUndo() {
-        println 'testTransactionsUndo()'
         def list = instance.listsAdd('TestUndo')
         assert !list.archived : 'expected list archived == 0 but got ' + list.archived
         list = instance.listsArchive(list.id)

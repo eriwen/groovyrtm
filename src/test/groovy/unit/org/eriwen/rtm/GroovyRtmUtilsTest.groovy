@@ -12,7 +12,6 @@ import org.eriwen.rtm.GroovyRtmUtils
  *
  * @author <a href="http://eriwen.com">Eric Wendelin</a>
  */
-
 class GroovyRtmUtilsTest {
     private static GroovyRtmUtils instance = null
     private static final String RAW_DATE_FORMAT = "yyyy-MM-dd"
