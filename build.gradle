@@ -23,8 +23,15 @@ dependencies {
     testCompile 'org.gmock:gmock:0.8.2'
 }
 
-checkstyle {
-    configFile = new File(rootDir, "checkstyle.xml")
+checkstyleMain {
+    ignoreFailures = true
+    configFile = new File(rootDir, 'checkstyle.xml')
+}
+
+codenarcMain {
+    ignoreFailures = true
+    reports.html.enabled = false
+    reports.xml.enabled = true
 }
 
 idea.module {
@@ -84,14 +91,14 @@ gradle.taskGraph.whenReady { taskGraph ->
 install.repositories.mavenInstaller {
     pom.project(pomConfiguration)
     if (signing.signatory) {
-        beforeDeployment { signPom(it) }
+        beforeDeployment { signing.signPom(it) }
     }
 }
 
 uploadArchives {
     repositories.mavenDeployer {
         if (signing.signatory) {
-            beforeDeployment { signPom(it) }
+            beforeDeployment { signing.signPom(it) }
         }
         name = 'mavenCentralReleaseDeployer'
         repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
