@@ -1,9 +1,10 @@
 package org.eriwen.rtm
 
+import static org.junit.Assert.*
+
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import static org.junit.Assert.*
 
 import groovy.util.slurpersupport.GPathResult
 import org.eriwen.rtm.model.*
