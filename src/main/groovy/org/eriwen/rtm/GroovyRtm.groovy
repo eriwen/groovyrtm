@@ -30,7 +30,7 @@ import org.xml.sax.SAXParseException
  */
 public class GroovyRtm {
     private final String encoding = 'UTF-8'
-    synchronized lastCallTimeMillis
+    synchronized lastCallTimeMillis = new Date().time
 
     public String currentUser = ''
     private String apiKey
@@ -38,42 +38,14 @@ public class GroovyRtm {
     private String perms
     private String frob
     private def curTimeline
-    private def config
-    private final Preferences prefs
-    private final GroovyRtmUtils utils
-    private RtmCollectionParser parser
-
-    GroovyRtm(final String configFilePath) {
-        lastCallTimeMillis = new Date().time
-        prefs = Preferences.userNodeForPackage(GroovyRtm.class)
-        parser = new RtmCollectionParser()
-        utils = new GroovyRtmUtils()
-        getConfigFromFile(configFilePath)
-    }
+    private final Preferences prefs = Preferences.userNodeForPackage(GroovyRtm.class)
+    private final GroovyRtmUtils utils = new GroovyRtmUtils()
+    private RtmCollectionParser parser = new RtmCollectionParser()
 
     GroovyRtm(final String key, final String sharedSecret, final String permissions = 'delete') {
-        lastCallTimeMillis = new Date().time
-        prefs = Preferences.userNodeForPackage(GroovyRtm.class)
-        parser = new RtmCollectionParser()
-        utils = new GroovyRtmUtils()
-        this.apiKey = key
-        this.perms = permissions
-        this.secret = sharedSecret
-    }
-
-    /**
-     * Get configuration from the passed in file url
-     *
-     * @param propsFileName file to get configuration from
-     * @throws IOException when the file could not be found
-     */
-    private getConfigFromFile(final String propsFileName) throws IOException {
-        File configFile = new File(propsFileName)
-        //Read properties from file and cache them
-        config = new ConfigSlurper().parse(configFile.toURL())
-        this.apiKey = config.api.key
-        this.perms = config.api.perms
-        this.secret = config.api.sharedsecret
+        apiKey = key
+        perms = permissions
+        secret = sharedSecret
     }
 
     /**
@@ -178,11 +150,11 @@ public class GroovyRtm {
         return getAuthUrl(frob)
     }
 
-    private String getAuthUrl(final String frob) {
+    protected String getAuthUrl(final String frob) {
         def params = ['perms=' + perms, 'frob=' + frob]
         params << "api_key=" + apiKey
         params << "api_sig=" + utils.getApiSignature(params, secret)
-        return 'http://www.rememberthemilk.com/services/auth/?' + params.join('&')
+        "http://www.rememberthemilk.com/services/auth/?${params.join('&')}"
     }
 
     /**

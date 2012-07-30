@@ -8,3 +8,5 @@ build
 *.ipr
 stacktrace.log
 gradle.properties
+groovyrtm.conf
+

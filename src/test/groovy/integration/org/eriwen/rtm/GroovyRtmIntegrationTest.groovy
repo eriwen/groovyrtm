@@ -14,14 +14,14 @@ import org.eriwen.rtm.model.*
  *
  * @author <a href="http://eriwen.com">Eric Wendelin</a>
  */
-
 class GroovyRtmIntegrationTest {
     private static GroovyRtm instance = null
 
     @Before void setUp() {
-        instance = new GroovyRtm('config/GroovyRtm.properties')
-        //NOTE: put your test user here to run the integration tests
-        instance.currentUser = 'todofx'
+        //NOTE: put your test user and API keys here
+        def config = new ConfigSlurper().parse(new File('gradle.properties').toURL())
+        instance = new GroovyRtm(config.api.key, config.api.sharedsecret, config.api.perms)
+        instance.currentUser = config.testuser
     }
     @After void tearDown() {
         instance = null
@@ -54,6 +54,17 @@ class GroovyRtmIntegrationTest {
     @Ignore
     @Test void testTestLogin() {
         assert instance.testLogin() : 'login unsuccessful'
+    }
+
+    @Test void testEnforceMinDelay() {
+        long start = System.currentTimeMillis()
+        Thread.start { instance.testEcho() }
+        Thread.start { instance.testEcho() }
+        Thread.start { instance.testEcho() }
+        instance.testEcho()
+        long end = System.currentTimeMillis()
+        //Should enforce that there was at least a 1 second gap between calls
+        assert end - start >= 1000 : 'Expected time to complete >= 1000ms but got ' + (end - start)
     }
 
     @Ignore

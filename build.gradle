@@ -7,7 +7,7 @@ apply plugin: 'checkstyle'
 
 defaultTasks 'clean', 'build'
 
-version = '2.1.1'
+version = '2.1.2'
 group = 'com.eriwen'
 ext.artifact = 'groovyrtm'
 ext.isSnapshot = version.endsWith("-SNAPSHOT")
@@ -17,7 +17,9 @@ repositories {
 }
 
 dependencies {
-    groovy 'org.codehaus.groovy:groovy:1.8.6'
+    groovy 'org.codehaus.groovy:groovy:2.0.1'
+    groovy 'org.codehaus.groovy:groovy-ant:2.0.1'
+    groovy 'org.codehaus.groovy:groovy-xml:2.0.1'
     compile 'commons-codec:commons-codec:1.6'
     testCompile 'junit:junit:4.10'
     testCompile 'org.gmock:gmock:0.8.2'

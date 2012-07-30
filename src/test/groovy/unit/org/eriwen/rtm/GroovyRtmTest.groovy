@@ -2,7 +2,6 @@ package org.eriwen.rtm
 
 import static org.junit.Assert.*
 
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
@@ -21,23 +20,11 @@ class GroovyRtmTest {
     private static GroovyRtm instance = null
     private final String testUser = 'bogus'
 
-    @Before void setUp() {
-        instance = new GroovyRtm('config/GroovyRtm.properties')
+    @Before void setup() {
+        instance = new GroovyRtm('API_KEY', 'SHARED_SECRET')
         instance.currentUser = testUser
         mockGroovyRtm = mock(instance)
         mockGroovyRtm.addCommonParams(match{it}).returns([:]).stub()
-    }
-    @After void tearDown() {
-        mockGroovyRtm = null
-        instance = null
-    }
-
-    @Test void testAlternateConstruction() {
-        def testApiKey = 'bogus'
-        def testSharedSecret = 'alsobogus'
-        instance = new GroovyRtm(testApiKey, testSharedSecret, 'delete')
-        assert instance.apiKey == testApiKey : 'Should have set api key'
-        assert instance.secret == testSharedSecret : 'Should have set shared secret'
     }
 
     @Test(expected=GroovyRtmException.class) void testExecMethodWithNoUser() {
@@ -91,17 +78,6 @@ class GroovyRtmTest {
         }
     }
 
-    @Test void testEnforceMinDelay() {
-        long start = System.currentTimeMillis()
-        Thread.start { instance.testEcho() }
-        Thread.start { instance.testEcho() }
-        Thread.start { instance.testEcho() }
-        instance.testEcho()
-        long end = System.currentTimeMillis()
-        //Should enforce that there was at least a 1 second gap between calls
-        assert end - start >= 1000 : 'Expected time to complete >= 1000ms but got ' + (end - start)
-    }
-
     @Test void testTestLogin() {
         mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><user id="987654321"><username>bob</username></user></rsp>')).once()
         play {
@@ -120,24 +96,23 @@ class GroovyRtmTest {
     @Test void testGetAuthUrl() {
         mockGroovyRtm.execUnauthenticatedMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><frob>bf617d0d7e0a3c5113b9815de0eab8683e077ea9</frob></rsp>')).once()
         play {
-            def authUrl = instance.getAuthUrl()
-            assert authUrl : 'expected valid URL but got nothing'
-            assert authUrl instanceof String : 'expected String URL but got a different type'
+            def expectedAuthUrl = 'http://www.rememberthemilk.com/services/auth/?api_key=API_KEY&frob=bf617d0d7e0a3c5113b9815de0eab8683e077ea9&perms=delete&api_sig=86f5fc2cd0ff6027accd4d8d231a5808'
+            assertEquals expectedAuthUrl, instance.getAuthUrl()
         }
     }
 
     @Test void testAuthCheckToken() {
-        mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><auth><token>6410bde19b6dfb474fec71f186bc715831ea6842</token><perms>delete</perms><user id="123" username="bob" fullname="Eric Wendelin"/></auth></rsp>')).once()
-        play {
-            assert instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842') : 'Expected token to be valid'
-        }
         mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="fail">error</rsp>')).once()
         play {
-            assert !instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842') : 'Expected token to be invalid'
+            assertFalse instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842')
         }
         mockGroovyRtm.execMethod(match{it}).returns(null).once()
         play {
-            assert !instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842') : 'Expected token to be invalid'
+            assertFalse instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842')
+        }
+        mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><auth><token>6410bde19b6dfb474fec71f186bc715831ea6842</token><perms>delete</perms><user id="123" username="bob" fullname="Eric Wendelin"/></auth></rsp>')).once()
+        play {
+            assertTrue instance.authCheckToken('6410bde19b6dfb474fec71f186bc715831ea6842')
         }
     }
 
@@ -153,18 +128,14 @@ class GroovyRtmTest {
     @Test void testAuthGetToken() {
         mockGroovyRtm.execUnauthenticatedMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><auth><token>4286cc6f8c3dcbf09001ecc83f95000efa45c9f5</token><perms>delete</perms><user id="123" username="bob" fullname="Eric Wendelin"/></auth></rsp>')).once()
         play {
-            def authToken = instance.authGetToken()
-            assert authToken && authToken instanceof String : 'Expected String auth token'
-            assert authToken.equals('4286cc6f8c3dcbf09001ecc83f95000efa45c9f5') : 'expected auth token "4286cc6f8c3dcbf09001ecc83f95000efa45c9f5" but got ' + authToken
+            assertEquals '4286cc6f8c3dcbf09001ecc83f95000efa45c9f5', instance.authGetToken()
         }
     }
 
     @Test void testGetNewAuthToken() {
         mockGroovyRtm.execUnauthenticatedMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><auth><token>4286cc6f8c3dcbf09001ecc83f95000efa45c9f5</token><perms>delete</perms><user id="123" username="bob" fullname="Eric Wendelin"/></auth></rsp>')).once()
         play {
-            def authToken = instance.getNewAuthToken()
-            assert authToken && authToken instanceof String : 'Expected String auth token'
-            assert authToken.equals('4286cc6f8c3dcbf09001ecc83f95000efa45c9f5') : 'expected auth token "4286cc6f8c3dcbf09001ecc83f95000efa45c9f5" but got ' + authToken
+            assertEquals '4286cc6f8c3dcbf09001ecc83f95000efa45c9f5', instance.getNewAuthToken()
         }
     }
 
@@ -185,7 +156,6 @@ class GroovyRtmTest {
         mockGroovyRtm.execMethod(match{it}).returns(new XmlSlurper().parseText('<rsp stat="ok"><contacts><contact id="1" fullname="Omar Kilani" username="omar"/></contacts></rsp>')).once()
         play {
             def contacts = instance.contactsGetList()
-            assert contacts instanceof List : "Expected List return type"
             assert contacts.size() == 1 : "Contacts should have 1 contact but got " + contacts.size()
             assert contacts[0].username == "omar" : "Expected user omar but got " + contacts[0].username
         }
