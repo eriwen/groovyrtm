@@ -15,13 +15,14 @@ import org.eriwen.rtm.model.*
  * @author <a href="http://eriwen.com">Eric Wendelin</a>
  */
 class GroovyRtmIntegrationTest {
-    private static GroovyRtm instance = null
+    private GroovyRtm instance = null
 
     @Before void setUp() {
         //NOTE: put your test user and API keys here
-        def config = new ConfigSlurper().parse(new File('gradle.properties').toURL())
-        instance = new GroovyRtm(config.api.key, config.api.sharedsecret, config.api.perms)
-        instance.currentUser = config.testuser
+//        def config = new ConfigSlurper().parse(new File('groovyrtm.conf').toURL())
+//        instance = new GroovyRtm(config.api.key, config.api.sharedsecret, config.api.perms)
+        instance = new GroovyRtm('c11620c31ac1c7e410f039d41c813a2b', '0ce781140c74257e')
+        instance.currentUser = 'todofx'
     }
     @After void tearDown() {
         instance = null
@@ -264,10 +265,8 @@ class GroovyRtmIntegrationTest {
     @Test void testTasksAdd() {
         def taskName = 'test tasks add'
         def task = instance.tasksAdd(taskName)
-        assert task : 'task could not be added'
-        assert task instanceof Task : 'task should be a Task'
-        assert task.name.equals(taskName) : 'task name does not match'
-        assert instance.tasksDelete(task.listId, task.taskSeriesId, task.taskId)
+        assertEquals taskName, task.name
+        assertNotNull instance.tasksDelete(task.listId, task.taskSeriesId, task.taskId)
     }
 
     @Ignore
@@ -350,10 +349,8 @@ class GroovyRtmIntegrationTest {
         task = instance.tasksSetDueDate(task.listId, task.taskSeriesId, task.taskId, 'today', false, true)
         //Get All Tasks
         def tasks = instance.tasksGetList()
-        assert tasks : 'tasks should not be null'
-        assert tasks instanceof List : 'wrong return type'
-        assert tasks.size > 0 : 'Expected tasks length > 0 but got ' + taskList.length
-        assert instance.tasksDelete(task.listId, task.taskSeriesId, task.taskId)
+        assertTrue tasks.size > 0
+        assertNotNull instance.tasksDelete(task.listId, task.taskSeriesId, task.taskId)
     }
 
     @Ignore

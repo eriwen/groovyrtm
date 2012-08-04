@@ -126,7 +126,7 @@ public class GroovyRtm {
     }
 
     /**
-     * Checks if the application is logged in
+     * Checks if the application is logged in.
      *
      * @return Returns true if the application is logged in to RTM
      * @see <a href="http://www.rememberthemilk.com/services/api/methods/rtm.test.login.rtm">REST API Documentation</a>
@@ -145,12 +145,12 @@ public class GroovyRtm {
      * @return the authorization URL. This is unique for every call to <code>getAuthUrl</code>
      * @throws GroovyRtmException when the HTTP request failed
      */
-    protected String getAuthUrl() throws GroovyRtmException {
+    public String getAuthUrl() throws GroovyRtmException {
         frob = authGetFrob()
         return getAuthUrl(frob)
     }
 
-    protected String getAuthUrl(final String frob) {
+    public String getAuthUrl(final String frob) {
         def params = ['perms=' + perms, 'frob=' + frob]
         params << "api_key=" + apiKey
         params << "api_sig=" + utils.getApiSignature(params, secret)
